@@ -1,42 +1,49 @@
-import React from "react";
-import ReactDOM from "react-dom/client";
-import ShinyRow from "./ShinyRow";
-import {
-  addElementToCache,
-  getCachedElement,
-  registerFn,
-} from "./plugin-helpers";
-import pluginInfo from "./plugin-manifest.json";
+import React from 'react';
+import { registerFn } from './common/plugin-helpers';
+import pluginInfo from './plugin-manifest.json';
+import { parsePluginSettings } from './kanban-board/helpers';
+import { handlePluginFormConfig } from './field-config/plugin-form';
+import { handleManagePlugin } from './manage';
+import { handleBoardPlugin } from './kanban-board';
 
-const updateApp = (root, data) => {
-  root.render(<ShinyRow data={data} />);
+import cssString from '!!raw-loader!./styles/style.css';
+
+const loadStyles = () => {
+  if (!document.getElementById(`${pluginInfo.id}-styles`)) {
+    const style = document.createElement('style');
+    style.id = `${pluginInfo.id}-styles`;
+    style.textContent = cssString;
+    document.head.appendChild(style);
+  }
 };
 
-const initApp = (div, data) => {
-  const root = ReactDOM.createRoot(div);
-  updateApp(root, data);
-  return root;
-};
+registerFn(
+  pluginInfo,
+  (handler, client, { getPluginSettings, getLanguage }) => {
+    loadStyles();
 
-registerFn(pluginInfo, (handler) => {
-  handler.on(
-    "flotiq.grid.cell::render",
-    ({ data, accessor, contentTypeName, contentObject }) => {
-      if (accessor !== "title") return null;
-      const key = `${contentTypeName}-${contentObject.id}-${accessor}`;
-      const cachedApp = getCachedElement(key);
-      if (cachedApp) {
-        updateApp(cachedApp.root, data);
-        return cachedApp.element;
+    handler.on('flotiq.plugins.manage::form-schema', (data) =>
+      handleManagePlugin(data),
+    );
+
+    handler.on('flotiq.form.field::config', (data) => {
+      if (
+        data.contentType?.id === pluginInfo.id &&
+        data.contentType?.nonCtdSchema &&
+        data.name
+      ) {
+        return handlePluginFormConfig(data);
       }
+    });
 
-      const div = document.createElement("div");
-      addElementToCache(div, initApp(div, data), key);
-      return div;
-    }
-  );
-});
+    handler.on('flotiq.content-objects-view::render', (data) => {
+      const pluginSettings = parsePluginSettings(getPluginSettings());
 
-const puginPreviewRoot = document.getElementById("plugin-preview-root");
+      return handleBoardPlugin(pluginSettings, data, pluginInfo, client);
+    });
+  },
+);
 
-if (puginPreviewRoot) initApp(puginPreviewRoot, "Hello World!");
+const puginPreviewRoot = document.getElementById('plugin-preview-root');
+
+if (puginPreviewRoot) initApp(puginPreviewRoot, 'Hello World!');

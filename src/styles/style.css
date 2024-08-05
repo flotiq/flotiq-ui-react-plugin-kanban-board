@@ -1,0 +1,108 @@
+/** container */
+.kanban-board-ui-plugin__container {
+    position: relative;
+    width: 100%;
+    height: 700px;
+    padding: 1.75rem 1.75rem 0 1.75rem;
+}
+
+.kanban-board__container {
+    width: 100%;
+    height: 100%;
+    background-color: white;
+    border: #f2f2f5 solid 1px;
+    border-radius: 0.5rem;
+    display: flex;
+}
+
+.mode-dark .kanban-board__container {
+    background-color: #020617;
+    border: #1e293b solid 1px;
+    overflow-x: scroll;
+}
+
+/** loader */
+
+.kanban-board__load-container{
+    position: absolute;
+    inset: 0;
+    background-color: rgba(0,0,0,0.35);
+    display: none;
+    z-index: 1;
+}
+
+.kanban-board__load-container--show{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.kanban-board__loader{
+    border: 5px solid #f3f3f3;
+    border-radius: 50%;
+    border-top: 5px solid #3498db;
+    width: 50px;
+    height: 50px;
+    -webkit-animation: spin 2s linear infinite; /* Safari */
+    animation: spin 2s linear infinite;
+    margin: 0 5px 0 0;
+
+}
+
+/** column */
+
+.kanban-board__column-container {
+    border: 2px solid red;
+    min-width: 250px;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+}
+
+.kanban-board__column-header {
+    color: #141046;
+    font-weight: 600;
+    font-size: 16px;
+    padding: 5px;
+    border-left: 1px solid #141046;
+    margin: 5px 10px 5px 10px;
+
+}
+
+.mode-dark .kanban-board__column-header {
+    color: white;
+}
+
+.kanban-board__column-body {
+    display: flex;
+    flex-direction: column;
+    padding: 15px;
+    flex: 1;
+}
+
+/** card */
+
+.kanban-board__card-container {
+    min-width: 150px;
+    min-height: 200px;
+    border: 1px #f2f2f5 solid;
+    background-color: #f2f2f5;
+    border-radius: 5px;
+    margin: 5px 0 5px 0;
+    cursor: grab;
+
+}
+
+.kanban-board__card-container:active{
+    cursor: grab;
+}
+
+.kanban-board__card-container--place-holder{
+    min-width: 150px;
+    min-height: 200px;
+    border: 1px rosybrown solid;
+    background-color: #f2f2f5;
+    border-radius: 5px;
+    margin: 5px 0 5px 0;
+    opacity: 0.4;
+}
