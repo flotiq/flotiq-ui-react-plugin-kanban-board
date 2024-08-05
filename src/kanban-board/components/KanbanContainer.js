@@ -9,9 +9,14 @@ import {
 import KanbanColumn from './KanbanColumn';
 import KanbanCard from './KanbanCard';
 import { createPortal } from 'react-dom';
-import { arrayMove, arraySwap } from '@dnd-kit/sortable';
+import { arrayMove } from '@dnd-kit/sortable';
 
-const KanbanContainer = ({ kanbanColumns, contentObjects, selectedField }) => {
+const KanbanContainer = ({
+  kanbanColumns,
+  contentObjects,
+  selectedField,
+  apiClient,
+}) => {
   const [cards, setCards] = useState({});
 
   const [selectedCard, setSelectedCard] = useState(null);
@@ -42,7 +47,7 @@ const KanbanContainer = ({ kanbanColumns, contentObjects, selectedField }) => {
     }
   }, []);
 
-  const handleCardColumnUpdate = (
+  const handleCardColumnUpdate = async (
     currentColumnId,
     targetColumnId,
     activeCard,
@@ -54,10 +59,17 @@ const KanbanContainer = ({ kanbanColumns, contentObjects, selectedField }) => {
         (card) => card.id !== activeCard.id,
       );
 
-      cardsCopy[targetColumnId].push({ ...activeCard });
+      activeCard = {
+        ...activeCard,
+        [selectedField]: targetColumnId,
+      };
+
+      cardsCopy[targetColumnId].push(activeCard);
 
       return cardsCopy;
     });
+
+    await apiClient.patch(activeCard.id, { [selectedField]: targetColumnId });
   };
 
   const handleCardOrderUpdate = (currentCard, targetCard, currentColumn) => {
@@ -141,7 +153,11 @@ const KanbanContainer = ({ kanbanColumns, contentObjects, selectedField }) => {
     () => (
       <div className="kanban-board__container">
         {kanbanColumns?.map((column) => (
-          <KanbanColumn column={column} cardsArray={cards[column]} />
+          <KanbanColumn
+            column={column}
+            cardsArray={cards[column]}
+            key={column}
+          />
         ))}
       </div>
     ),

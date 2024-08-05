@@ -29,7 +29,6 @@ const KanbanCard = ({ card }) => {
         ref={setNodeRef}
         style={style}
         className="kanban-board__card-container--place-holder"
-        key={card.id}
       />
     );
   }
@@ -41,7 +40,6 @@ const KanbanCard = ({ card }) => {
       {...listeners}
       {...attributes}
       className="kanban-board__card-container"
-      key={card.id}
     >
       <h5>{card.title}</h5>
     </div>

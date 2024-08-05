@@ -3,19 +3,26 @@ import { addElementToCache, getCachedElement } from '../common/plugin-helpers';
 import { parseOptions } from './helpers';
 import KanbanContainer from './components/KanbanContainer';
 
-const updateApp = (root, kanbanCols, contentObjects, selectedField) => {
+const updateApp = (
+  root,
+  kanbanCols,
+  contentObjects,
+  selectedField,
+  apiClient,
+) => {
   root.render(
     <KanbanContainer
       kanbanColumns={kanbanCols}
       contentObjects={contentObjects}
       selectedField={selectedField}
+      apiClient={apiClient}
     />,
   );
 };
 
-const initApp = (div, kanbanCols, contentObjects, selectedField) => {
+const initApp = (div, kanbanCols, contentObjects, selectedField, apiClient) => {
   const root = ReactDOM.createRoot(div);
-  updateApp(root, kanbanCols, contentObjects, selectedField);
+  updateApp(root, kanbanCols, contentObjects, selectedField, apiClient);
   return root;
 };
 
@@ -41,14 +48,26 @@ export const handleBoardPlugin = (
   const kanbanCols = parseOptions(contentType, selectedField);
 
   if (cachedApp) {
-    updateApp(cachedApp.root, kanbanCols, contentObjects, selectedField);
+    updateApp(
+      cachedApp.root,
+      kanbanCols,
+      contentObjects,
+      selectedField,
+      client[contentTypeName],
+    );
     return cachedApp.element;
   }
 
   const div = document.createElement('div');
   addElementToCache(
     div,
-    initApp(div, kanbanCols, contentObjects, selectedField),
+    initApp(
+      div,
+      kanbanCols,
+      contentObjects,
+      selectedField,
+      client[contentTypeName],
+    ),
     key,
   );
   return div;

@@ -18,12 +18,12 @@ const KanbanColumn = ({ column, cardsArray }) => {
   const cardsIds = useMemo(() => cards?.map((card) => card?.id) || [], [cards]);
 
   return (
-    <div className="kanban-board__column-container" key={column}>
+    <div className="kanban-board__column-container">
       <div className="kanban-board__column-header">{column}</div>
       <div className="kanban-board__column-body" ref={setNodeRef}>
         <SortableContext items={cardsIds} id={column}>
           {cards?.map((card) => (
-            <KanbanCard card={card} />
+            <KanbanCard card={card} key={card.id} />
           ))}
         </SortableContext>
       </div>
