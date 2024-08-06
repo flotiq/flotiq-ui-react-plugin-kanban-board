@@ -9,6 +9,8 @@ const updateApp = (
   contentObjects,
   selectedField,
   apiClient,
+  pluginConfig,
+  getApiUrl,
 ) => {
   root.render(
     <KanbanContainer
@@ -16,13 +18,31 @@ const updateApp = (
       contentObjects={contentObjects}
       selectedField={selectedField}
       apiClient={apiClient}
+      pluginConfig={pluginConfig}
+      getApiUrl={getApiUrl}
     />,
   );
 };
 
-const initApp = (div, kanbanCols, contentObjects, selectedField, apiClient) => {
+const initApp = (
+  div,
+  kanbanCols,
+  contentObjects,
+  selectedField,
+  apiClient,
+  pluginConfig,
+  getApiUrl,
+) => {
   const root = ReactDOM.createRoot(div);
-  updateApp(root, kanbanCols, contentObjects, selectedField, apiClient);
+  updateApp(
+    root,
+    kanbanCols,
+    contentObjects,
+    selectedField,
+    apiClient,
+    pluginConfig,
+    getApiUrl,
+  );
   return root;
 };
 
@@ -31,6 +51,7 @@ export const handleBoardPlugin = (
   { contentTypeName, contentType, contentObjects },
   pluginInfo,
   client,
+  getApiUrl,
 ) => {
   if (
     !config.contentTypes.includes(contentTypeName) ||
@@ -44,7 +65,8 @@ export const handleBoardPlugin = (
   const key = `${contentTypeName}-${contentType.id}`;
   const cachedApp = getCachedElement(key);
 
-  const selectedField = config.settings[contentTypeName]?.source;
+  const pluginConfig = config.settings[contentTypeName];
+  const selectedField = pluginConfig?.source;
   const kanbanCols = parseOptions(contentType, selectedField);
 
   if (cachedApp) {
@@ -54,6 +76,8 @@ export const handleBoardPlugin = (
       contentObjects,
       selectedField,
       client[contentTypeName],
+      pluginConfig,
+      getApiUrl,
     );
     return cachedApp.element;
   }
@@ -67,6 +91,8 @@ export const handleBoardPlugin = (
       contentObjects,
       selectedField,
       client[contentTypeName],
+      pluginConfig,
+      getApiUrl,
     ),
     key,
   );

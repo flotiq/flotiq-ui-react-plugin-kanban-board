@@ -16,18 +16,59 @@ const KanbanContainer = ({
   contentObjects,
   selectedField,
   apiClient,
+  pluginConfig,
+  getApiUrl,
 }) => {
   const [cards, setCards] = useState({});
 
   const [selectedCard, setSelectedCard] = useState(null);
 
+  const getCardValueFromConfig = (configKey, contentObject, config) => {
+    const objectKey = config[configKey]?.key;
+    return contentObject[objectKey];
+  };
+
   useEffect(() => {
     const cardsObj = {};
-
     kanbanColumns?.forEach((column) => {
-      cardsObj[column] = contentObjects?.filter(
-        (object) => object[selectedField] === column,
-      );
+      cardsObj[column] = [];
+      contentObjects?.forEach((object) => {
+        if (object[selectedField] === column) {
+          cardsObj[column].push({
+            contentObject: object,
+            card: {
+              additional_field: [
+                {
+                  data: getCardValueFromConfig(
+                    pluginConfig['additional_field_1'],
+                    object,
+                    pluginConfig,
+                  ),
+                  ...pluginConfig['additional_field_1'],
+                },
+                {
+                  data: getCardValueFromConfig(
+                    pluginConfig['additional_field_2'],
+                    object,
+                    pluginConfig,
+                  ),
+                  ...pluginConfig['additional_field_2'],
+                },
+                {
+                  data: getCardValueFromConfig(
+                    pluginConfig['additional_field_3'],
+                    object,
+                    pluginConfig,
+                  ),
+                  ...pluginConfig['additional_field_3'],
+                },
+              ],
+              title: getCardValueFromConfig('title', object, pluginConfig),
+              image: getCardValueFromConfig('image', object, pluginConfig),
+            },
+          });
+        }
+      });
     });
 
     setCards(cardsObj);
@@ -43,7 +84,10 @@ const KanbanContainer = ({
 
   const onDragStart = useCallback((event) => {
     if (event.active.data.current?.type === 'Card') {
-      setSelectedCard(event.active.data.current.card);
+      setSelectedCard({
+        card: event.active.data.current.card,
+        contentObject: event.active.data.current.contentObject,
+      });
     }
   }, []);
 
@@ -56,20 +100,20 @@ const KanbanContainer = ({
       const cardsCopy = { ...cards };
 
       cardsCopy[currentColumnId] = cardsCopy[currentColumnId].filter(
-        (card) => card.id !== activeCard.id,
+        ({ contentObject }) => contentObject.id !== activeCard.contentObject.id,
       );
 
-      activeCard = {
-        ...activeCard,
+      const activeCardCopy = { ...activeCard };
+
+      activeCardCopy.contentObject = {
+        ...activeCardCopy.contentObject,
         [selectedField]: targetColumnId,
       };
 
-      cardsCopy[targetColumnId].push(activeCard);
+      cardsCopy[targetColumnId].push(activeCardCopy);
 
       return cardsCopy;
     });
-
-    await apiClient.patch(activeCard.id, { [selectedField]: targetColumnId });
   };
 
   const handleCardOrderUpdate = (currentCard, targetCard, currentColumn) => {
@@ -77,11 +121,12 @@ const KanbanContainer = ({
       const cardCopy = { ...cards };
 
       const currentCardId = cardCopy[currentColumn].findIndex(
-        (card) => card.id === currentCard.id,
+        ({ contentObject }) =>
+          contentObject.id === currentCard.contentObject.id,
       );
 
       const targetCardId = cardCopy[currentColumn].findIndex(
-        (card) => card.id === targetCard.id,
+        ({ contentObject }) => contentObject.id === targetCard.contentObject.id,
       );
 
       cardCopy[currentColumn] = arrayMove(
@@ -107,7 +152,10 @@ const KanbanContainer = ({
     const isOverCard = over.data.current?.type === 'Card';
     const isOverColumn = over.data.current?.type === 'Column';
 
-    const activeCard = active.data.current.card;
+    const activeCard = {
+      card: active.data.current.card,
+      contentObject: active.data.current.contentObject,
+    };
     const currentColumnId = active.data.current.sortable.containerId;
 
     if (isOverCard) {
@@ -126,7 +174,7 @@ const KanbanContainer = ({
     }
   };
 
-  const onDragEnd = (event) => {
+  const onDragEnd = async (event) => {
     const { active, over } = event;
 
     if (!over) return;
@@ -134,13 +182,26 @@ const KanbanContainer = ({
     const activeCardId = active.id;
     const overCardId = over.id;
 
-    if (activeCardId === overCardId) return;
+    if (activeCardId === overCardId) {
+      const targetColumnId = active.data.current.contentObject[selectedField];
+      await apiClient.patch(activeCardId, {
+        [selectedField]: targetColumnId,
+      });
+
+      return;
+    }
 
     const isOverCard = over.data.current?.type === 'Card';
 
     if (selectedCard && isOverCard) {
-      const activeCard = active.data.current.card;
-      const overCard = over.data.current.card;
+      const activeCard = {
+        card: active.data.current.card,
+        contentObject: active.data.current.contentObject,
+      };
+      const overCard = {
+        card: over.data.current.card,
+        contentObject: over.data.current.contentObject,
+      };
       const currentColumn = active.data.current.sortable.containerId;
 
       handleCardOrderUpdate(activeCard, overCard, currentColumn);
@@ -157,6 +218,7 @@ const KanbanContainer = ({
             column={column}
             cardsArray={cards[column]}
             key={column}
+            getApiUrl={getApiUrl}
           />
         ))}
       </div>
@@ -175,7 +237,13 @@ const KanbanContainer = ({
         {columnsContainer}
         {createPortal(
           <DragOverlay dropAnimation={null}>
-            {selectedCard && <KanbanCard card={selectedCard} />}
+            {selectedCard && (
+              <KanbanCard
+                {...selectedCard}
+                getApiUrl={getApiUrl}
+                additionalClasses={'kanban-board__card-container--dragged'}
+              />
+            )}
           </DragOverlay>,
           document.body,
         )}

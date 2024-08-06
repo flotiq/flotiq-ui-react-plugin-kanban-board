@@ -106,3 +106,7 @@
     margin: 5px 0 5px 0;
     opacity: 0.4;
 }
+
+.kanban-board__card-container--dragged{
+    transform: rotate(5deg);
+}

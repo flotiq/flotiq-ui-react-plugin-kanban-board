@@ -3,7 +3,7 @@ import KanbanCard from './KanbanCard';
 import { SortableContext } from '@dnd-kit/sortable';
 import { useDroppable } from '@dnd-kit/core';
 
-const KanbanColumn = ({ column, cardsArray }) => {
+const KanbanColumn = ({ column, cardsArray, getApiUrl }) => {
   const [cards, setCards] = useState(cardsArray);
 
   const { setNodeRef } = useDroppable({
@@ -15,15 +15,22 @@ const KanbanColumn = ({ column, cardsArray }) => {
     setCards(cardsArray);
   }, [cardsArray]);
 
-  const cardsIds = useMemo(() => cards?.map((card) => card?.id) || [], [cards]);
-
+  const cardsIds = useMemo(
+    () => cards?.map((card) => card?.contentObject?.id) || [],
+    [cards],
+  );
   return (
     <div className="kanban-board__column-container">
       <div className="kanban-board__column-header">{column}</div>
       <div className="kanban-board__column-body" ref={setNodeRef}>
         <SortableContext items={cardsIds} id={column}>
-          {cards?.map((card) => (
-            <KanbanCard card={card} key={card.id} />
+          {cards?.map(({ card, contentObject }) => (
+            <KanbanCard
+              card={card}
+              contentObject={contentObject}
+              key={contentObject.id}
+              getApiUrl={getApiUrl}
+            />
           ))}
         </SortableContext>
       </div>

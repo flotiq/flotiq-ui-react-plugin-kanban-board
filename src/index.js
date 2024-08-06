@@ -19,7 +19,7 @@ const loadStyles = () => {
 
 registerFn(
   pluginInfo,
-  (handler, client, { getPluginSettings, getLanguage }) => {
+  (handler, client, { getPluginSettings, getLanguage, getApiUrl }) => {
     loadStyles();
 
     handler.on('flotiq.plugins.manage::form-schema', (data) =>
@@ -39,11 +39,13 @@ registerFn(
     handler.on('flotiq.content-objects-view::render', (data) => {
       const pluginSettings = parsePluginSettings(getPluginSettings());
 
-      return handleBoardPlugin(pluginSettings, data, pluginInfo, client);
+      return handleBoardPlugin(
+        pluginSettings,
+        data,
+        pluginInfo,
+        client,
+        getApiUrl,
+      );
     });
   },
 );
-
-const puginPreviewRoot = document.getElementById('plugin-preview-root');
-
-if (puginPreviewRoot) initApp(puginPreviewRoot, 'Hello World!');
