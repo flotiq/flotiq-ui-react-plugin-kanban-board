@@ -19,7 +19,7 @@ export const getSchema = (contentTypes) => ({
             type: 'array',
             items: {
               type: 'object',
-              required: ['content_type', 'source', 'card_fields'],
+              required: ['content_type', 'source', 'title'],
               properties: {
                 source: {
                   type: 'string',
@@ -29,7 +29,23 @@ export const getSchema = (contentTypes) => ({
                   type: 'string',
                   minLength: 1,
                 },
-                card_fields: {
+                title: {
+                  type: 'string',
+                  minLength: 1,
+                },
+                image: {
+                  type: 'string',
+                  minLength: 1,
+                },
+                additional_field_1: {
+                  type: 'string',
+                  minLength: 1,
+                },
+                additional_field_2: {
+                  type: 'string',
+                  minLength: 1,
+                },
+                additional_field_3: {
                   type: 'string',
                   minLength: 1,
                 },
@@ -47,7 +63,15 @@ export const getSchema = (contentTypes) => ({
     propertiesConfig: {
       buttons: {
         items: {
-          order: ['content_type', 'source', 'card_fields'],
+          order: [
+            'content_type',
+            'source',
+            'title',
+            'image',
+            'additional_field_1',
+            'additional_field_2',
+            'additional_field_3',
+          ],
           propertiesConfig: {
             source: {
               label: i18n.t('Source'),
@@ -56,21 +80,48 @@ export const getSchema = (contentTypes) => ({
               inputType: 'select',
               options: [],
             },
-            card_fields: {
-              label: 'Card field',
-              unique: false,
-              helpText: i18n.t('SourceHelpText'),
-              inputType: 'select',
-              options: [],
-              multiple: true,
-            },
             content_type: {
               label: i18n.t('ContentType'),
               unique: false,
-              helpText: '',
+              helpText: i18n.t('ContentTypeHelpText'),
               inputType: 'select',
               optionsWithLabels: contentTypes,
               useOptionsWithLabels: true,
+            },
+            title: {
+              label: i18n.t('Title'),
+              unique: false,
+              helpText: i18n.t('TitleHelpText'),
+              inputType: 'select',
+              options: [],
+            },
+            image: {
+              label: i18n.t('Image'),
+              unique: false,
+              helpText: i18n.t('ImageHelpText'),
+              inputType: 'select',
+              options: [],
+            },
+            additional_field_1: {
+              label: i18n.t('AdditionalField1'),
+              unique: false,
+              helpText: i18n.t('AdditionalFieldHelpText'),
+              inputType: 'select',
+              options: [],
+            },
+            additional_field_2: {
+              label: i18n.t('AdditionalField2'),
+              unique: false,
+              helpText: i18n.t('AdditionalFieldHelpText'),
+              inputType: 'select',
+              options: [],
+            },
+            additional_field_3: {
+              label: i18n.t('AdditionalField3'),
+              unique: false,
+              helpText: i18n.t('AdditionalFieldHelpText'),
+              inputType: 'select',
+              options: [],
             },
           },
         },
@@ -92,24 +143,32 @@ const addToErrors = (errors, index, field, error) => {
 export const getValidator = (sourceFieldKeys) => {
   return (values) => {
     const errors = {};
+    //@todo add error translations
+    values.buttons?.forEach(
+      ({ content_type, source, card_fields, title, image }, index) => {
+        if (!content_type) {
+          addToErrors(errors, index, 'content_type', '');
+        }
 
-    values.buttons?.forEach(({ content_type, source, card_fields }, index) => {
-      if (!content_type) {
-        addToErrors(errors, index, 'content_type', i18n.t('FieldRequired'));
-      }
+        if (!source) {
+          addToErrors(errors, index, 'source', '');
+        } else if (!(sourceFieldKeys[content_type] || []).includes(source)) {
+          addToErrors(errors, index, 'source', '');
+        }
 
-      if (!source) {
-        addToErrors(errors, index, 'source', i18n.t('FieldRequired'));
-      } else if (!(sourceFieldKeys[content_type] || []).includes(source)) {
-        addToErrors(errors, index, 'source', i18n.t('WrongSource'));
-      }
+        if (!title) {
+          addToErrors(errors, index, 'title', i18n.t('FieldRequired'));
+        } else if (false) {
+          addToErrors(errors, index, 'title', i18n.t('WrongSource'));
+        }
 
-      // if (!card_fields) {
-      //   addToErrors(errors, index, "card_fields", i18n.t("FieldRequired"));
-      // } else if (true) {
-      //   addToErrors(errors, index, "card_fields", i18n.t("WrongSource"));
-      // }
-    });
+        if (!image) {
+          addToErrors(errors, index, 'image', i18n.t('FieldRequired'));
+        } else if (false) {
+          addToErrors(errors, index, 'image', i18n.t('WrongSource'));
+        }
+      },
+    );
 
     return errors;
   };

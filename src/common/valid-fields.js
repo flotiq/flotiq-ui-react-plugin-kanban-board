@@ -1,45 +1,94 @@
-import pluginInfo from "../plugin-manifest.json";
+import pluginInfo from '../plugin-manifest.json';
 
 //@todo check if we can use radio
-export const validSourceFields = ["select", "radio"];
-export const validCardFields = ["text", "number", "select", "date"];
+export const validSourceFields = ['select', 'radio'];
+
+export const validCardTitleFields = ['text'];
+
+export const validCardImageFields = ['datasource'];
+
+export const validCardAdditionalFields = [
+  'text',
+  'number',
+  'select',
+  'date',
+  'checkbox',
+  'radio',
+];
 
 export const getValidFields = (contentTypes) => {
-    const sourceFields = {};
-    const sourceFieldsKeys = {};
+  const sourceFields = {};
+  const sourceFieldsKeys = {};
 
-    const cardFields = {};
-    const cardFieldsKeys = {};
+  const cardTitleFields = {};
+  const cardTitleFieldsKeys = {};
 
-    contentTypes
-        ?.filter(({ internal }) => !internal)
-        .map(({ name, label }) => ({ value: name, label }));
+  const cardImageFields = {};
+  const cardImageFieldsKeys = {};
 
-    (contentTypes || []).forEach(({ name, metaDefinition }) => {
-        sourceFields[name] = [];
-        sourceFieldsKeys[name] = [];
+  const cardAdditionalFields = {};
+  const cardAdditionalFieldsKeys = {};
 
-        cardFields[name] = [];
-        cardFieldsKeys[name] = [];
+  contentTypes
+    ?.filter(({ internal }) => !internal)
+    .map(({ name, label }) => ({ value: name, label }));
 
-        Object.entries(metaDefinition?.propertiesConfig || {}).forEach(
-            ([key, fieldConfig]) => {
-                const inputType = fieldConfig?.inputType;
+  (contentTypes || []).forEach(({ name, metaDefinition, schemaDefinition }) => {
+    sourceFields[name] = [];
+    sourceFieldsKeys[name] = [];
 
-                if (validSourceFields.includes(inputType)) {
-                    sourceFields[name].push({ value: key, label: fieldConfig.label });
-                    sourceFieldsKeys[name].push(key);
-                }
+    cardTitleFields[name] = [];
+    cardTitleFieldsKeys[name] = [];
 
-                if (validCardFields.includes(inputType)) {
-                    cardFields[name].push({ value: key, label: fieldConfig.label });
-                    cardFieldsKeys[name].push(key);
-                }
-            },
-        );
-    });
+    cardImageFields[name] = [];
+    cardImageFieldsKeys[name] = [];
 
-    return { sourceFields, sourceFieldsKeys, cardFields, cardFieldsKeys };
+    cardAdditionalFields[name] = [];
+    cardAdditionalFieldsKeys[name] = [];
+
+    Object.entries(metaDefinition?.propertiesConfig || {}).forEach(
+      ([key, fieldConfig]) => {
+        const inputType = fieldConfig?.inputType;
+
+        if (validSourceFields.includes(inputType)) {
+          sourceFields[name].push({ value: key, label: fieldConfig.label });
+          sourceFieldsKeys[name].push(key);
+        }
+
+        if (validCardTitleFields.includes(inputType)) {
+          cardTitleFields[name].push({ value: key, label: fieldConfig.label });
+          cardTitleFieldsKeys[name].push(key);
+        }
+
+        if (
+          validCardImageFields.includes(inputType) &&
+          fieldConfig?.validation?.relationContenttype === '_media'
+        ) {
+          cardImageFields[name].push({ value: key, label: fieldConfig.label });
+          cardImageFieldsKeys[name].push(key);
+        }
+
+        if (validCardAdditionalFields.includes(inputType)) {
+          cardAdditionalFields[name].push({
+            value: key,
+            label: fieldConfig.label,
+          });
+          cardAdditionalFieldsKeys[name].push(key);
+        }
+      },
+    );
+  });
+
+  return {
+    sourceFields,
+    sourceFieldsKeys,
+    cardTitleFields,
+    cardTitleFieldsKeys,
+    cardImageFields,
+    cardImageFieldsKeys,
+    cardAdditionalFields,
+    cardAdditionalFieldsKeys,
+  };
 };
 
 export const validFieldsCacheKey = `${pluginInfo.id}-form-valid-fields`;
