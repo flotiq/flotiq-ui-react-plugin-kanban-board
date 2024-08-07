@@ -25,23 +25,23 @@ const KanbanCard = ({ card, contentObject, additionalClasses = '' }) => {
   };
 
   //@todo add renderers
-  const AdditionalDataRenderer = useCallback(({ data, key, type }) => {
-    const defaultRenderer = (key, data) => {};
+  const AdditionalDataRenderer = useCallback(({ data, dataKey, type }) => {
+    const defaultRenderer = (dataKey, data) => {};
 
-    const checkBoxRenderer = (key, data) => {};
+    const checkBoxRenderer = (dataKey, data) => {};
 
-    const selectAndRadioRenderer = (key, data) => {};
+    const selectAndRadioRenderer = (dataKey, data) => {};
 
     switch (type) {
       case 'checkbox':
-        return checkBoxRenderer(key, data);
+        return checkBoxRenderer(dataKey, data);
       case 'select':
       case 'radio':
-        return selectAndRadioRenderer(key, data);
+        return selectAndRadioRenderer(dataKey, data);
       case 'text':
       case 'number':
       case 'date':
-        return defaultRenderer(key, data);
+        return defaultRenderer(dataKey, data);
       default:
         return <></>;
     }
@@ -79,7 +79,10 @@ const KanbanCard = ({ card, contentObject, additionalClasses = '' }) => {
       <h5 className="kanban-board__card-header">{card.title}</h5>
       <div className="kanban-board__card-addtional-fields-container">
         {card.additionalFields.map((additionalField) => (
-          <AdditionalDataRenderer {...additionalField} />
+          <AdditionalDataRenderer
+            {...additionalField}
+            dataKey={additionalField.key}
+          />
         ))}
       </div>
     </div>
