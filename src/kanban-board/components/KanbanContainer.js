@@ -13,20 +13,40 @@ import { arrayMove } from '@dnd-kit/sortable';
 
 const KanbanContainer = ({
   kanbanColumns,
-  contentObjects,
   selectedField,
-  apiClient,
+  client,
   pluginConfig,
-  getApiUrl,
 }) => {
+  const [contentObjects, setContentObjects] = useState([]);
   const [cards, setCards] = useState({});
+  const [isLoading, setIsLoading] = useState(false);
 
   const [selectedCard, setSelectedCard] = useState(null);
+
+  const { apiClient, getApiUrl } = client;
 
   const getCardValueFromConfig = (configKey, contentObject, config) => {
     const objectKey = config[configKey]?.key;
     return contentObject[objectKey];
   };
+
+  const getImageFromCo = (configKey, contentObject, config) => {
+    const objectKey = config[configKey]?.key;
+    const image = contentObject[objectKey]?.[0];
+
+    if (!image) return '';
+
+    return `${getApiUrl()}/image/0x0/${image.id}.${image.extension}`;
+  };
+
+  useEffect(() => {
+    setIsLoading(true);
+    apiClient.list({ hydrate: 1 }).then((data) => {
+      if (data.status !== 200) return;
+      setContentObjects(data.body.data);
+      setIsLoading(false);
+    });
+  }, []);
 
   useEffect(() => {
     const cardsObj = {};
@@ -37,34 +57,20 @@ const KanbanContainer = ({
           cardsObj[column].push({
             contentObject: object,
             card: {
-              additional_field: [
-                {
-                  data: getCardValueFromConfig(
-                    pluginConfig['additional_field_1'],
-                    object,
-                    pluginConfig,
-                  ),
-                  ...pluginConfig['additional_field_1'],
-                },
-                {
-                  data: getCardValueFromConfig(
-                    pluginConfig['additional_field_2'],
-                    object,
-                    pluginConfig,
-                  ),
-                  ...pluginConfig['additional_field_2'],
-                },
-                {
-                  data: getCardValueFromConfig(
-                    pluginConfig['additional_field_3'],
-                    object,
-                    pluginConfig,
-                  ),
-                  ...pluginConfig['additional_field_3'],
-                },
-              ],
+              additionalFields: [
+                'additional_field_1',
+                'additional_field_2',
+                'additional_field_3',
+              ].map((additionalFieldKey) => ({
+                data: getCardValueFromConfig(
+                  pluginConfig[additionalFieldKey],
+                  object,
+                  pluginConfig,
+                ),
+                ...pluginConfig[additionalFieldKey],
+              })),
               title: getCardValueFromConfig('title', object, pluginConfig),
-              image: getCardValueFromConfig('image', object, pluginConfig),
+              image: getImageFromCo('image', object, pluginConfig),
             },
           });
         }
@@ -91,7 +97,7 @@ const KanbanContainer = ({
     }
   }, []);
 
-  const handleCardColumnUpdate = async (
+  const handleCardColumnUpdate = (
     currentColumnId,
     targetColumnId,
     activeCard,
@@ -158,8 +164,8 @@ const KanbanContainer = ({
     };
     const currentColumnId = active.data.current.sortable.containerId;
 
+    //handle dragging over card from other column
     if (isOverCard) {
-      //handle dragging over card from other column
       const targetColumnId = over.data.current.sortable.containerId;
 
       if (currentColumnId === targetColumnId) return;
@@ -210,17 +216,27 @@ const KanbanContainer = ({
     setSelectedCard(null);
   };
 
+  const loader = useMemo(
+    () => (
+      <div className="kanban-board-ui-plugin__loader-container">
+        <div className="kanban-board-ui-plugin__loader"></div>
+      </div>
+    ),
+    [],
+  );
+
   const columnsContainer = useMemo(
     () => (
       <div className="kanban-board__container">
-        {kanbanColumns?.map((column) => (
-          <KanbanColumn
-            column={column}
-            cardsArray={cards[column]}
-            key={column}
-            getApiUrl={getApiUrl}
-          />
-        ))}
+        {!isLoading
+          ? kanbanColumns?.map((column) => (
+              <KanbanColumn
+                column={column}
+                cardsArray={cards[column]}
+                key={column}
+              />
+            ))
+          : loader}
       </div>
     ),
     [kanbanColumns, cards],
@@ -240,7 +256,6 @@ const KanbanContainer = ({
             {selectedCard && (
               <KanbanCard
                 {...selectedCard}
-                getApiUrl={getApiUrl}
                 additionalClasses={'kanban-board__card-container--dragged'}
               />
             )}

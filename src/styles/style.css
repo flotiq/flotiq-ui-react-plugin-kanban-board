@@ -109,4 +109,5 @@
 
 .kanban-board__card-container--dragged{
     transform: rotate(5deg);
+    cursor:grabbing;
 }

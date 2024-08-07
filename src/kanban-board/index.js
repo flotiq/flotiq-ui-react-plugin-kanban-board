@@ -6,59 +6,34 @@ import KanbanContainer from './components/KanbanContainer';
 const updateApp = (
   root,
   kanbanCols,
-  contentObjects,
   selectedField,
   apiClient,
   pluginConfig,
-  getApiUrl,
 ) => {
   root.render(
     <KanbanContainer
       kanbanColumns={kanbanCols}
-      contentObjects={contentObjects}
       selectedField={selectedField}
-      apiClient={apiClient}
+      client={apiClient}
       pluginConfig={pluginConfig}
-      getApiUrl={getApiUrl}
     />,
   );
 };
 
-const initApp = (
-  div,
-  kanbanCols,
-  contentObjects,
-  selectedField,
-  apiClient,
-  pluginConfig,
-  getApiUrl,
-) => {
+const initApp = (div, kanbanCols, selectedField, apiClient, pluginConfig) => {
   const root = ReactDOM.createRoot(div);
-  updateApp(
-    root,
-    kanbanCols,
-    contentObjects,
-    selectedField,
-    apiClient,
-    pluginConfig,
-    getApiUrl,
-  );
+  updateApp(root, kanbanCols, selectedField, apiClient, pluginConfig);
   return root;
 };
 
 export const handleBoardPlugin = (
   config,
-  { contentTypeName, contentType, contentObjects },
+  { contentTypeName, contentType },
   pluginInfo,
   client,
   getApiUrl,
 ) => {
-  if (
-    !config.contentTypes.includes(contentTypeName) ||
-    !contentType ||
-    !contentObjects ||
-    contentObjects?.length === 0
-  ) {
+  if (!config.contentTypes.includes(contentTypeName) || !contentType) {
     return null;
   }
 
@@ -73,11 +48,12 @@ export const handleBoardPlugin = (
     updateApp(
       cachedApp.root,
       kanbanCols,
-      contentObjects,
       selectedField,
-      client[contentTypeName],
+      {
+        apiClient: client[contentTypeName],
+        getApiUrl: getApiUrl,
+      },
       pluginConfig,
-      getApiUrl,
     );
     return cachedApp.element;
   }
@@ -88,11 +64,12 @@ export const handleBoardPlugin = (
     initApp(
       div,
       kanbanCols,
-      contentObjects,
       selectedField,
-      client[contentTypeName],
+      {
+        apiClient: client[contentTypeName],
+        getApiUrl: getApiUrl,
+      },
       pluginConfig,
-      getApiUrl,
     ),
     key,
   );

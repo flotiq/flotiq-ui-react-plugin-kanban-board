@@ -1,4 +1,3 @@
-import React from 'react';
 import { registerFn } from './common/plugin-helpers';
 import pluginInfo from './plugin-manifest.json';
 import { parsePluginSettings } from './kanban-board/helpers';
@@ -6,7 +5,7 @@ import { handlePluginFormConfig } from './field-config/plugin-form';
 import { handleManagePlugin } from './manage';
 import { handleBoardPlugin } from './kanban-board';
 
-import cssString from '!!raw-loader!./styles/style.css';
+import cssString from './styles/style.css';
 
 const loadStyles = () => {
   if (!document.getElementById(`${pluginInfo.id}-styles`)) {

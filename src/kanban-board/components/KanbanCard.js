@@ -1,13 +1,8 @@
-import { useCallback, useMemo, useState } from 'react';
+import { useCallback } from 'react';
 import { useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
 
-const KanbanCard = ({
-  card,
-  contentObject,
-  getApiUrl,
-  additionalClasses = '',
-}) => {
+const KanbanCard = ({ card, contentObject, additionalClasses = '' }) => {
   const {
     setNodeRef,
     attributes,
@@ -43,22 +38,14 @@ const KanbanCard = ({
       case 'select':
       case 'radio':
         return selectAndRadioRenderer(data);
-        break;
       case 'text':
       case 'number':
       case 'date':
         return defaultRenderer(data);
-        break;
+      default:
+        return defaultRenderer(data);
     }
   }, []);
-
-  const cardImage = useMemo(() => {
-    const src = card.image?.[0]?.dataUrl;
-    if (!src) return null;
-    console.log(getApiUrl() + src);
-
-    return getApiUrl() + src;
-  }, [card]);
 
   if (isDragging) {
     return (
@@ -79,13 +66,19 @@ const KanbanCard = ({
       className={'kanban-board__card-container ' + additionalClasses}
     >
       <div className="kanban-board__card-image-container">
-        {cardImage && (
-          <img className="kanban-board__card-image" alt="" src={cardImage} />
+        {card.image && (
+          <img
+            className="kanban-board__card-image"
+            alt=""
+            src={card.image}
+            width={200}
+            height={150}
+          />
         )}
       </div>
       <h5 className="kanban-board__card-header">{card.title}</h5>
       <div className="kanban-board__card-addtional-fields-container">
-        {card.additional_field.map((additionalField) => (
+        {card.additionalFields.map((additionalField) => (
           <AdditionalDataRenderer type={''} data={''} />
         ))}
       </div>

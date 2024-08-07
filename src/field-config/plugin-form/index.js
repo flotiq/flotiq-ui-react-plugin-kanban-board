@@ -2,6 +2,7 @@ import { getCachedElement } from '../../common/plugin-helpers';
 import { validFieldsCacheKey } from '../../common/valid-fields';
 
 const insertSelectOptions = (config, options = []) => {
+  console.log(config);
   config.options = options;
   config.additionalHelpTextClasses = 'break-normal';
 };

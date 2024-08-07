@@ -76,7 +76,7 @@ export const getValidFields = (contentTypes) => {
 
         if (validCardAdditionalFields.includes(inputType)) {
           cardAdditionalFields[name].push({
-            value: { ket: key, type: inputType },
+            value: { key: key, type: inputType },
             label: fieldConfig.label,
           });
           cardAdditionalFieldsKeys[name].push(key);

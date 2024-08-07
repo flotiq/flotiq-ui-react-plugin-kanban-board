@@ -6,7 +6,7 @@ export const addElementToCache = (element, key, data = {}) => {
     data,
   };
 
-  element.addEventListener("flotiq.detached", () => {
+  element.addEventListener('flotiq.detached', () => {
     setTimeout(() => {
       return delete appRoots[key];
     }, 50);
