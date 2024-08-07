@@ -46,7 +46,7 @@ const KanbanContainer = ({
       setContentObjects(data.body.data);
       setIsLoading(false);
     });
-  }, []);
+  }, [apiClient]);
 
   useEffect(() => {
     const cardsObj = {};
@@ -78,7 +78,13 @@ const KanbanContainer = ({
     });
 
     setCards(cardsObj);
-  }, [kanbanColumns, contentObjects, selectedField]);
+  }, [
+    kanbanColumns,
+    contentObjects,
+    selectedField,
+    getImageFromCo,
+    pluginConfig,
+  ]);
 
   const sensors = useSensors(
     useSensor(PointerSensor, {
@@ -239,7 +245,7 @@ const KanbanContainer = ({
           : loader}
       </div>
     ),
-    [kanbanColumns, cards],
+    [kanbanColumns, cards, isLoading, loader],
   );
 
   return (

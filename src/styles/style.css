@@ -23,29 +23,11 @@
 
 /** loader */
 
-.kanban-board__load-container{
-    position: absolute;
-    inset: 0;
-    background-color: rgba(0,0,0,0.35);
-    display: none;
-    z-index: 1;
+.kanban-board-ui-plugin__loader-container{
+
 }
 
-.kanban-board__load-container--show{
-    display: flex;
-    justify-content: center;
-    align-items: center;
-}
-
-.kanban-board__loader{
-    border: 5px solid #f3f3f3;
-    border-radius: 50%;
-    border-top: 5px solid #3498db;
-    width: 50px;
-    height: 50px;
-    -webkit-animation: spin 2s linear infinite; /* Safari */
-    animation: spin 2s linear infinite;
-    margin: 0 5px 0 0;
+.kanban-board-ui-plugin__loader{
 
 }
 
@@ -91,10 +73,6 @@
     margin: 5px 0 5px 0;
     cursor: grab;
 
-}
-
-.kanban-board__card-container:active{
-    cursor: grab;
 }
 
 .kanban-board__card-container--place-holder{

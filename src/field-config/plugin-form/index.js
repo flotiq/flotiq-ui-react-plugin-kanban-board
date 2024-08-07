@@ -42,5 +42,7 @@ export const handlePluginFormConfig = ({ name, config, formik }) => {
     case 'additional_field_3':
       insertSelectOptions(config, cardAdditionalFields?.[ctd]);
       break;
+    default:
+      break;
   }
 };
