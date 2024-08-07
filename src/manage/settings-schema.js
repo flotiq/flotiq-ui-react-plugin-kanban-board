@@ -140,14 +140,31 @@ const addToErrors = (errors, index, field, error) => {
   errors.buttons[index][field] = error;
 };
 
-export const getValidator = (sourceFieldKeys) => {
+export const getValidator = (
+  sourceFieldKeys,
+  cardTitleFieldsKeys,
+  cardImageFieldsKeys,
+  cardAdditionalFieldsKeys,
+) => {
   return (values) => {
     const errors = {};
     //@todo add error translations
     values.buttons?.forEach(
-      ({ content_type, source, card_fields, title, image }, index) => {
+      (
+        {
+          content_type,
+          source,
+          card_fields,
+          title,
+          image,
+          additional_field_1,
+          additional_field_2,
+          additional_field_3,
+        },
+        index,
+      ) => {
         if (!content_type) {
-          addToErrors(errors, index, 'content_type', '');
+          addToErrors(errors, index, 'content_type', i18n.t('FieldRequired'));
         }
 
         if (!source) {
@@ -158,13 +175,34 @@ export const getValidator = (sourceFieldKeys) => {
 
         if (!title) {
           addToErrors(errors, index, 'title', i18n.t('FieldRequired'));
-        } else if (false) {
+        } else if (!(cardTitleFieldsKeys[content_type] || []).includes(title)) {
           addToErrors(errors, index, 'title', i18n.t('WrongSource'));
         }
 
-        if (!image) {
-          addToErrors(errors, index, 'image', i18n.t('FieldRequired'));
-        } else if (false) {
+        if (!(cardImageFieldsKeys[content_type] || []).includes(image)) {
+          addToErrors(errors, index, 'image', i18n.t('WrongSource'));
+        }
+
+        if (
+          !(cardAdditionalFieldsKeys[content_type] || []).includes(
+            additional_field_1,
+          )
+        ) {
+          addToErrors(errors, index, 'image', i18n.t('WrongSource'));
+        }
+
+        if (
+          !(cardAdditionalFieldsKeys[content_type] || []).includes(
+            additional_field_2,
+          )
+        ) {
+          addToErrors(errors, index, 'image', i18n.t('WrongSource'));
+        }
+        if (
+          !(cardAdditionalFieldsKeys[content_type] || []).includes(
+            additional_field_3,
+          )
+        ) {
           addToErrors(errors, index, 'image', i18n.t('WrongSource'));
         }
       },

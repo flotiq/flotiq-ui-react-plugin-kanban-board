@@ -6,6 +6,7 @@ import { handleManagePlugin } from './manage';
 import { handleBoardPlugin } from './kanban-board';
 
 import cssString from './styles/style.css';
+import i18n from 'i18next';
 
 const loadStyles = () => {
   if (!document.getElementById(`${pluginInfo.id}-styles`)) {
@@ -20,6 +21,11 @@ registerFn(
   pluginInfo,
   (handler, client, { getPluginSettings, getLanguage, getApiUrl }) => {
     loadStyles();
+
+    const language = getLanguage();
+    if (language !== i18n.language) {
+      i18n.changeLanguage(language);
+    }
 
     handler.on('flotiq.plugins.manage::form-schema', (data) =>
       handleManagePlugin(data),
@@ -45,6 +51,12 @@ registerFn(
         client,
         getApiUrl,
       );
+    });
+
+    handler.on('flotiq.language::changed', ({ language }) => {
+      if (language !== i18n.language) {
+        i18n.changeLanguage(language);
+      }
     });
   },
 );

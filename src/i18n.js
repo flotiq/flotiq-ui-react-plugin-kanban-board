@@ -22,6 +22,8 @@ i18n.init({
         AdditionalField3: 'Additional Field 3',
         AdditionalFieldHelpText:
           'Pick the field which will be used to display additional field in card preview (optional)',
+        FieldRequired: 'Field is required',
+        WrongSource: 'This field type is not supported',
       },
     },
     pl: {
@@ -42,6 +44,8 @@ i18n.init({
         AdditionalField3: 'Dodatkowe Pole 3',
         AdditionalFieldHelpText:
           'Wybierz pole, które będzie użyte do wyświetlania dodatkowego pola w podglądzie karty (opcjonalne)',
+        FieldRequired: 'Pole jest wymagane',
+        WrongSource: 'Ten typ pola nie jest wspierany',
       },
     },
   },
