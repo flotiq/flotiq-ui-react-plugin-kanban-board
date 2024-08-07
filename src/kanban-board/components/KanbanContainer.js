@@ -63,7 +63,7 @@ const KanbanContainer = ({
                 'additional_field_3',
               ].map((additionalFieldKey) => ({
                 data: getCardValueFromConfig(
-                  pluginConfig[additionalFieldKey],
+                  additionalFieldKey,
                   object,
                   pluginConfig,
                 ),
