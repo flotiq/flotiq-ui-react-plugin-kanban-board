@@ -19,12 +19,22 @@ export const handleManagePlugin = ({ contentTypes, modalInstance }) => {
       ?.filter(({ internal }) => !internal)
       .map(({ name, label }) => ({ value: name, label }));
 
-    const { sourceFieldsKeys } = validFields;
+    const {
+      sourceFieldsKeys,
+      cardTitleFieldsKeys,
+      cardImageFieldsKeys,
+      cardAdditionalFieldsKeys,
+    } = validFields;
 
     formSchema = {
       options: {
         disbaledBuildInValidation: true,
-        onValidate: getValidator(sourceFieldsKeys),
+        onValidate: getValidator(
+          sourceFieldsKeys,
+          cardTitleFieldsKeys,
+          cardImageFieldsKeys,
+          cardAdditionalFieldsKeys,
+        ),
       },
       schema: getSchema(ctds),
     };
