@@ -88,7 +88,6 @@ const KanbanCard = ({ card, contentObject, additionalClasses = '' }) => {
       </div>
       <h5 className="kanban-board__card-header">{card.title}</h5>
       <div className="kanban-board__card-additional-fields-container">
-        {console.log(card.additionalFields)}
         {card.additionalFields.map((additionalField) => (
           <AdditionalDataRenderer
             key={additionalField.key}
