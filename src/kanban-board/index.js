@@ -9,6 +9,7 @@ const updateApp = (
   selectedField,
   apiClient,
   pluginConfig,
+  contentDefinition,
 ) => {
   root.render(
     <KanbanContainer
@@ -16,13 +17,28 @@ const updateApp = (
       selectedField={selectedField}
       client={apiClient}
       pluginConfig={pluginConfig}
+      contentDefinition={contentDefinition}
     />,
   );
 };
 
-const initApp = (div, kanbanCols, selectedField, apiClient, pluginConfig) => {
+const initApp = (
+  div,
+  kanbanCols,
+  selectedField,
+  apiClient,
+  pluginConfig,
+  contentDefinition,
+) => {
   const root = ReactDOM.createRoot(div);
-  updateApp(root, kanbanCols, selectedField, apiClient, pluginConfig);
+  updateApp(
+    root,
+    kanbanCols,
+    selectedField,
+    apiClient,
+    pluginConfig,
+    contentDefinition,
+  );
   return root;
 };
 
@@ -54,6 +70,7 @@ export const handleBoardPlugin = (
         getApiUrl: getApiUrl,
       },
       pluginConfig,
+      contentType,
     );
     return cachedApp.element;
   }
@@ -70,6 +87,7 @@ export const handleBoardPlugin = (
         getApiUrl: getApiUrl,
       },
       pluginConfig,
+      contentType,
     ),
     key,
   );

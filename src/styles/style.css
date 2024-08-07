@@ -89,3 +89,13 @@
     transform: rotate(5deg);
     cursor:grabbing;
 }
+
+.kanban-board__card-image-container{}
+
+.kanban-board__card-image{}
+
+.kanban-board__card-header{}
+
+
+/** card additional field*/
+.kanban-board__card-additional-fields-container{}

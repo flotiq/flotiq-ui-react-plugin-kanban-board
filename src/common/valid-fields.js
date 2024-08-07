@@ -57,7 +57,7 @@ export const getValidFields = (contentTypes) => {
 
         if (validCardTitleFields.includes(inputType)) {
           cardTitleFields[name].push({
-            value: { key: key },
+            value: key,
             label: fieldConfig.label,
           });
           cardTitleFieldsKeys[name].push(key);
@@ -68,7 +68,7 @@ export const getValidFields = (contentTypes) => {
           fieldConfig?.validation?.relationContenttype === '_media'
         ) {
           cardImageFields[name].push({
-            value: { key: key },
+            value: key,
             label: fieldConfig.label,
           });
           cardImageFieldsKeys[name].push(key);
@@ -76,7 +76,7 @@ export const getValidFields = (contentTypes) => {
 
         if (validCardAdditionalFields.includes(inputType)) {
           cardAdditionalFields[name].push({
-            value: { key: key, type: inputType },
+            value: key,
             label: fieldConfig.label,
           });
           cardAdditionalFieldsKeys[name].push(key);

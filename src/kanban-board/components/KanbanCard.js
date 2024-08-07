@@ -1,6 +1,39 @@
-import { useCallback } from 'react';
 import { useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
+
+const AdditionalDataRenderer = ({ data, dataKey, type }) => {
+  const defaultRenderer = (dataKey, data) => (
+    <div className="kanban-board__card-additional-field-default-renderer">
+      {dataKey}: {data}
+    </div>
+  );
+
+  const checkBoxRenderer = (dataKey, data) => (
+    <div className="kanban-board__card-additional-field-checkbox-renderer">
+      {dataKey}: <input type={'checkbox'} checked={data === true} readOnly />
+    </div>
+  );
+
+  const selectAndRadioRenderer = (dataKey, data) => (
+    <div className="kanban-board__card-additional-field-select-radio-renderer">
+      {dataKey}: {data}
+    </div>
+  );
+
+  switch (type) {
+    case 'checkbox':
+      return checkBoxRenderer(dataKey, data);
+    case 'select':
+    case 'radio':
+      return selectAndRadioRenderer(dataKey, data);
+    case 'text':
+    case 'number':
+    case 'date':
+      return defaultRenderer(dataKey, data);
+    default:
+      return <></>;
+  }
+};
 
 const KanbanCard = ({ card, contentObject, additionalClasses = '' }) => {
   const {
@@ -23,29 +56,6 @@ const KanbanCard = ({ card, contentObject, additionalClasses = '' }) => {
     transition,
     transform: CSS.Transform.toString(transform),
   };
-
-  //@todo add renderers
-  const AdditionalDataRenderer = useCallback(({ data, dataKey, type }) => {
-    const defaultRenderer = (dataKey, data) => {};
-
-    const checkBoxRenderer = (dataKey, data) => {};
-
-    const selectAndRadioRenderer = (dataKey, data) => {};
-
-    switch (type) {
-      case 'checkbox':
-        return checkBoxRenderer(dataKey, data);
-      case 'select':
-      case 'radio':
-        return selectAndRadioRenderer(dataKey, data);
-      case 'text':
-      case 'number':
-      case 'date':
-        return defaultRenderer(dataKey, data);
-      default:
-        return <></>;
-    }
-  }, []);
 
   if (isDragging) {
     return (
@@ -77,11 +87,14 @@ const KanbanCard = ({ card, contentObject, additionalClasses = '' }) => {
         )}
       </div>
       <h5 className="kanban-board__card-header">{card.title}</h5>
-      <div className="kanban-board__card-addtional-fields-container">
+      <div className="kanban-board__card-additional-fields-container">
+        {console.log(card.additionalFields)}
         {card.additionalFields.map((additionalField) => (
           <AdditionalDataRenderer
-            {...additionalField}
+            key={additionalField.key}
             dataKey={additionalField.key}
+            data={additionalField.data}
+            type={additionalField.type}
           />
         ))}
       </div>

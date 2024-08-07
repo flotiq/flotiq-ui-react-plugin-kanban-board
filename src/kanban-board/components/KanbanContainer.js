@@ -10,12 +10,14 @@ import KanbanColumn from './KanbanColumn';
 import KanbanCard from './KanbanCard';
 import { createPortal } from 'react-dom';
 import { arrayMove } from '@dnd-kit/sortable';
+import { extractFieldType } from '../helpers';
 
 const KanbanContainer = ({
   kanbanColumns,
   selectedField,
   client,
   pluginConfig,
+  contentDefinition,
 }) => {
   const [contentObjects, setContentObjects] = useState([]);
   const [cards, setCards] = useState({});
@@ -24,20 +26,22 @@ const KanbanContainer = ({
   const [selectedCard, setSelectedCard] = useState(null);
 
   const { apiClient, getApiUrl } = client;
-
   const getCardValueFromConfig = (configKey, contentObject, config) => {
-    const objectKey = config[configKey]?.key;
+    const objectKey = config[configKey];
     return contentObject[objectKey];
   };
 
-  const getImageFromCo = (configKey, contentObject, config) => {
-    const objectKey = config[configKey]?.key;
-    const image = contentObject[objectKey]?.[0];
+  const getImageFromCo = useCallback(
+    (configKey, contentObject, config) => {
+      const objectKey = config[configKey];
+      const image = contentObject[objectKey]?.[0];
 
-    if (!image) return '';
+      if (!image) return '';
 
-    return `${getApiUrl()}/image/0x0/${image.id}.${image.extension}`;
-  };
+      return `${getApiUrl()}/image/0x0/${image.id}.${image.extension}`;
+    },
+    [getApiUrl],
+  );
 
   useEffect(() => {
     setIsLoading(true);
@@ -67,7 +71,10 @@ const KanbanContainer = ({
                   object,
                   pluginConfig,
                 ),
-                ...pluginConfig[additionalFieldKey],
+                ...extractFieldType(
+                  contentDefinition,
+                  pluginConfig[additionalFieldKey],
+                ),
               })),
               title: getCardValueFromConfig('title', object, pluginConfig),
               image: getImageFromCo('image', object, pluginConfig),
@@ -168,6 +175,7 @@ const KanbanContainer = ({
       card: active.data.current.card,
       contentObject: active.data.current.contentObject,
     };
+
     const currentColumnId = active.data.current.sortable.containerId;
 
     //handle dragging over card from other column

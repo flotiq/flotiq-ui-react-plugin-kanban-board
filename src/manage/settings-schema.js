@@ -148,7 +148,6 @@ export const getValidator = (
 ) => {
   return (values) => {
     const errors = {};
-    //@todo add error translations
     values.buttons?.forEach(
       (
         {
@@ -179,31 +178,52 @@ export const getValidator = (
           addToErrors(errors, index, 'title', i18n.t('WrongSource'));
         }
 
-        if (!(cardImageFieldsKeys[content_type] || []).includes(image)) {
-          addToErrors(errors, index, 'image', i18n.t('WrongSource'));
-        }
-
         if (
-          !(cardAdditionalFieldsKeys[content_type] || []).includes(
-            additional_field_1,
-          )
+          title &&
+          !(cardImageFieldsKeys[content_type] || []).includes(image)
         ) {
           addToErrors(errors, index, 'image', i18n.t('WrongSource'));
         }
 
         if (
+          !(
+            (additional_field_1 && cardAdditionalFieldsKeys[content_type]) ||
+            []
+          ).includes(additional_field_1)
+        ) {
+          addToErrors(
+            errors,
+            index,
+            'additional_field_1',
+            i18n.t('WrongSource'),
+          );
+        }
+
+        if (
+          additional_field_2 &&
           !(cardAdditionalFieldsKeys[content_type] || []).includes(
             additional_field_2,
           )
         ) {
-          addToErrors(errors, index, 'image', i18n.t('WrongSource'));
+          addToErrors(
+            errors,
+            index,
+            'additional_field_2',
+            i18n.t('WrongSource'),
+          );
         }
         if (
+          additional_field_3 &&
           !(cardAdditionalFieldsKeys[content_type] || []).includes(
             additional_field_3,
           )
         ) {
-          addToErrors(errors, index, 'image', i18n.t('WrongSource'));
+          addToErrors(
+            errors,
+            index,
+            'additional_field_3',
+            i18n.t('WrongSource'),
+          );
         }
       },
     );
