@@ -69,14 +69,15 @@ const KanbanContainer = ({
         content: 'Are you sure that you want to delete 1 Content Object?',
         buttons: [
           {
-            key: 'result',
+            key: 'delete',
             label: 'Delete',
             result: true,
           },
           {
-            key: 'callback',
-            label: `Cancel`,
+            key: 'cancel',
+            label: 'Cancel',
             result: false,
+            color: 'grayBordered',
           },
         ],
       });
@@ -171,10 +172,34 @@ const KanbanContainer = ({
     }
   }, []);
 
+  const changeCardOrder = (
+    cards,
+    currentColumn,
+    currentCardId,
+    targetCardId,
+  ) => {
+    const currentCardIndex = cards[currentColumn].findIndex(
+      ({ contentObject }) => contentObject.id === currentCardId,
+    );
+
+    const targetCardIndex = cards[currentColumn].findIndex(
+      ({ contentObject }) => contentObject.id === targetCardId,
+    );
+
+    cards[currentColumn] = arrayMove(
+      cards[currentColumn],
+      currentCardIndex,
+      targetCardIndex,
+    );
+
+    return cards;
+  };
+
   const handleCardColumnUpdate = (
     currentColumnId,
     targetColumnId,
     activeCard,
+    overCardId = null,
   ) => {
     setCards((cards) => {
       const cardsCopy = { ...cards };
@@ -191,31 +216,31 @@ const KanbanContainer = ({
       };
 
       cardsCopy[targetColumnId].push(activeCardCopy);
-
+      if (overCardId) {
+        changeCardOrder(
+          cardsCopy,
+          targetColumnId,
+          activeCard.contentObject.id,
+          overCardId,
+        );
+      }
       return cardsCopy;
     });
   };
 
-  const handleCardOrderUpdate = (currentCard, targetCard, currentColumn) => {
+  const handleCardOrderUpdate = (
+    currentCardId,
+    targetCardId,
+    currentColumn,
+  ) => {
     setCards((cards) => {
       const cardCopy = { ...cards };
-
-      const currentCardId = cardCopy[currentColumn].findIndex(
-        ({ contentObject }) =>
-          contentObject.id === currentCard.contentObject.id,
-      );
-
-      const targetCardId = cardCopy[currentColumn].findIndex(
-        ({ contentObject }) => contentObject.id === targetCard.contentObject.id,
-      );
-
-      cardCopy[currentColumn] = arrayMove(
-        cardCopy[currentColumn],
+      return changeCardOrder(
+        cardCopy,
+        currentColumn,
         currentCardId,
         targetCardId,
       );
-
-      return cardCopy;
     });
   };
 
@@ -242,10 +267,16 @@ const KanbanContainer = ({
     //handle dragging over card from other column
     if (isOverCard) {
       const targetColumnId = over.data.current.sortable.containerId;
+      const overCardId = over.id;
 
       if (currentColumnId === targetColumnId) return;
 
-      handleCardColumnUpdate(currentColumnId, targetColumnId, activeCard);
+      handleCardColumnUpdate(
+        currentColumnId,
+        targetColumnId,
+        activeCard,
+        overCardId,
+      );
     }
 
     //handle dragging over other column
@@ -275,17 +306,9 @@ const KanbanContainer = ({
     const isOverCard = over.data.current?.type === 'Card';
 
     if (selectedCard && isOverCard) {
-      const activeCard = {
-        card: active.data.current.card,
-        contentObject: active.data.current.contentObject,
-      };
-      const overCard = {
-        card: over.data.current.card,
-        contentObject: over.data.current.contentObject,
-      };
       const currentColumn = active.data.current.sortable.containerId;
 
-      handleCardOrderUpdate(activeCard, overCard, currentColumn);
+      handleCardOrderUpdate(activeCardId, overCardId, currentColumn);
     }
 
     setSelectedCard(null);
@@ -322,7 +345,7 @@ const KanbanContainer = ({
     <div className="kanban-board-ui-plugin__container">
       <DndContext
         onDragStart={onDragStart}
-        onDragOver={debounce(onDragOver, 60)}
+        onDragOver={debounce(onDragOver, 75)}
         onDragEnd={onDragEnd}
         sensors={sensors}
       >
