@@ -88,6 +88,7 @@ const KanbanContainer = ({
   }, [
     kanbanColumns,
     contentObjects,
+    contentDefinition,
     selectedField,
     getImageFromCo,
     pluginConfig,

@@ -110,6 +110,45 @@ const KanbanCard = ({ card, contentObject, additionalClasses = '' }) => {
           />
         ))}
       </div>
+
+      {console.log('contentObject', window, contentObject)}
+      <div className="kanban-board__card-actions">
+        <div className="actions-footer">
+          <a
+            className="action-button icon-edit"
+            href={
+              window.location.pathname.replace(
+                contentObject.internal.contentType,
+                '',
+              ) +
+              `edit/` +
+              contentObject.internal.contentType +
+              '/' +
+              contentObject.id
+            }
+            target="_self"
+            rel="noreferrer"
+            title="Edit"
+          />
+          <a
+            className="action-button icon-duplicate"
+            href={
+              window.location.pathname.replace(
+                contentObject.internal.contentType,
+                '',
+              ) +
+              `duplicate/` +
+              contentObject.internal.contentType +
+              '/' +
+              contentObject.id
+            }
+            target="_self"
+            rel="noreferrer"
+            title="Duplicate"
+          />
+          <span className="action-button icon-delete" title="Delete" />
+        </div>
+      </div>
     </div>
   );
 };

@@ -16,13 +16,12 @@
 }
 
 .mode-dark .kanban-board__container {
-  background-color: #020617;
+  /* background-color: #020617;
   border: #1e293b solid 1px;
-  overflow-x: scroll;
+  overflow-x: scroll; */
 }
 
 /** loader */
-
 .kanban-board-ui-plugin__loader-container {
 }
 
@@ -72,6 +71,12 @@
   margin: 5px 0 5px 0;
   cursor: grab;
   overflow: hidden;
+  position: relative;
+}
+
+.mode-dark .kanban-board__card-container {
+  background-color: #020617;
+  border: 1px #1e293b solid;
 }
 
 .kanban-board__card-container--place-holder {
@@ -116,6 +121,10 @@
   margin-top: 25px;
 }
 
+.mode-dark .kanban-board__card-header {
+  color: white;
+}
+
 .kanban-board__card-with_image .kanban-board__card-header {
   margin-top: 0px;
 }
@@ -144,4 +153,97 @@
   color: #000000;
   font-size: 12px;
   font-weight: normal;
+}
+
+.mode-dark .kanban-board__card-additional-field-select-radio-renderer-value,
+.mode-dark .kanban-board__card-additional-field-default-renderer-value {
+  color: white;
+  font-size: 12px;
+  font-weight: normal;
+}
+
+/** loader */
+.kanban-board-ui-plugin__loader-container {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.kanban-board-ui-plugin__loader {
+  width: 40px;
+  height: 40px;
+  aspect-ratio: 1;
+  border-radius: 50%;
+  border: 5px solid #a5b4c6;
+  border-right-color: #0083fc;
+  animation: animation-loader 1s infinite linear;
+}
+
+@keyframes animation-loader {
+  to {
+    transform: rotate(1turn);
+  }
+}
+
+.kanban-board__card-container:hover .kanban-board__card-actions {
+  display: block;
+}
+
+.kanban-board__card-actions {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    180deg,
+    rgba(20, 16, 70, 0.5) 0%,
+    rgba(20, 16, 70, 0.8) 100%
+  );
+  display: none;
+}
+
+.actions-footer {
+  display: flex;
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  align-items: center;
+  width: 100%;
+  justify-content: flex-end;
+  padding: 10px 10px;
+}
+
+.action-button {
+  width: 25px;
+  height: 25px;
+  margin-right: 5px;
+  cursor: pointer;
+}
+
+/** icon */
+.icon-delete {
+  content: url('../images/delete-icon.png');
+}
+
+.icon-delete:hover {
+  content: url('../images/delete-icon-hover.png');
+}
+
+.icon-duplicate {
+  content: url('../images/duplicate-icon.png');
+}
+
+.icon-duplicate:hover {
+  content: url('../images/duplicate-icon-hover.png');
+}
+
+.icon-edit {
+  content: url('../images/edit-icon.png');
+}
+
+.icon-edit:hover {
+  content: url('../images/edit-icon-hover.png');
 }
