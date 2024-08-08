@@ -21,10 +21,10 @@ const AdditionalDataRenderer = ({ data, dataKey, type }) => {
 
   const selectAndRadioRenderer = (dataKey, data) => (
     <div className="kanban-board__card-additional-field-select-radio-renderer">
-      <span className="kanban-board__card-additional-field-default-renderer-title">
+      <span className="kanban-board__card-additional-field-select-radio-renderer-title">
         {dataKey}:
       </span>
-      <span className="kanban-board__card-additional-field-default-renderer-value">
+      <span className="kanban-board__card-additional-field-select-radio-renderer-value">
         {data}
       </span>
     </div>
