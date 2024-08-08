@@ -4,7 +4,12 @@ import { CSS } from '@dnd-kit/utilities';
 const AdditionalDataRenderer = ({ data, dataKey, type }) => {
   const defaultRenderer = (dataKey, data) => (
     <div className="kanban-board__card-additional-field-default-renderer">
-      {dataKey}: {data}
+      <span className="kanban-board__card-additional-field-default-renderer-title">
+        {dataKey}:
+      </span>
+      <span className="kanban-board__card-additional-field-default-renderer-value">
+        {data}
+      </span>
     </div>
   );
 
@@ -16,7 +21,12 @@ const AdditionalDataRenderer = ({ data, dataKey, type }) => {
 
   const selectAndRadioRenderer = (dataKey, data) => (
     <div className="kanban-board__card-additional-field-select-radio-renderer">
-      {dataKey}: {data}
+      <span className="kanban-board__card-additional-field-default-renderer-title">
+        {dataKey}:
+      </span>
+      <span className="kanban-board__card-additional-field-default-renderer-value">
+        {data}
+      </span>
     </div>
   );
 
@@ -73,10 +83,13 @@ const KanbanCard = ({ card, contentObject, additionalClasses = '' }) => {
       style={style}
       {...listeners}
       {...attributes}
-      className={'kanban-board__card-container ' + additionalClasses}
+      className={
+        `kanban-board__card-container ${card.image && 'kanban-board__card-with_image'}` +
+        additionalClasses
+      }
     >
-      <div className="kanban-board__card-image-container">
-        {card.image && (
+      {card.image && (
+        <div className="kanban-board__card-image-container">
           <img
             className="kanban-board__card-image"
             alt=""
@@ -84,8 +97,8 @@ const KanbanCard = ({ card, contentObject, additionalClasses = '' }) => {
             width={200}
             height={150}
           />
-        )}
-      </div>
+        </div>
+      )}
       <h5 className="kanban-board__card-header">{card.title}</h5>
       <div className="kanban-board__card-additional-fields-container">
         {card.additionalFields.map((additionalField) => (

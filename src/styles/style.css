@@ -1,101 +1,147 @@
 /** container */
 .kanban-board-ui-plugin__container {
-    position: relative;
-    width: 100%;
-    height: 700px;
-    padding: 1.75rem 1.75rem 0 1.75rem;
+  position: relative;
+  width: 100%;
+  height: 700px;
+  padding: 1.75rem 1.75rem 0 1.75rem;
 }
 
 .kanban-board__container {
-    width: 100%;
-    height: 100%;
-    background-color: white;
-    border: #f2f2f5 solid 1px;
-    border-radius: 0.5rem;
-    display: flex;
+  width: 100%;
+  height: 100%;
+  background-color: transparent;
+  border: transparent solid 1px;
+  border-radius: 0.5rem;
+  display: flex;
 }
 
 .mode-dark .kanban-board__container {
-    background-color: #020617;
-    border: #1e293b solid 1px;
-    overflow-x: scroll;
+  background-color: #020617;
+  border: #1e293b solid 1px;
+  overflow-x: scroll;
 }
 
 /** loader */
 
-.kanban-board-ui-plugin__loader-container{
-
+.kanban-board-ui-plugin__loader-container {
 }
 
-.kanban-board-ui-plugin__loader{
-
+.kanban-board-ui-plugin__loader {
 }
 
 /** column */
 
 .kanban-board__column-container {
-    border: 2px solid red;
-    min-width: 250px;
-    position: relative;
-    display: flex;
-    flex-direction: column;
+  border: 2px solid transparent;
+  min-width: 250px;
+  position: relative;
+  display: flex;
+  flex-direction: column;
 }
 
 .kanban-board__column-header {
-    color: #141046;
-    font-weight: 600;
-    font-size: 16px;
-    padding: 5px;
-    border-left: 1px solid #141046;
-    margin: 5px 10px 5px 10px;
-
+  color: #8ea1b8;
+  font-weight: 600;
+  font-size: 16px;
+  padding: 5px;
+  border-bottom: 1px solid #dae3f2;
+  margin: 5px 10px 5px 10px;
+  display: flex;
+  justify-content: center;
 }
 
 .mode-dark .kanban-board__column-header {
-    color: white;
+  color: white;
 }
 
 .kanban-board__column-body {
-    display: flex;
-    flex-direction: column;
-    padding: 15px;
-    flex: 1;
+  display: flex;
+  flex-direction: column;
+  padding: 15px;
+  flex: 1;
 }
 
 /** card */
 
 .kanban-board__card-container {
-    min-width: 150px;
-    min-height: 200px;
-    border: 1px #f2f2f5 solid;
-    background-color: #f2f2f5;
-    border-radius: 5px;
-    margin: 5px 0 5px 0;
-    cursor: grab;
-
+  min-width: 150px;
+  min-height: 130px;
+  border: 1px #dae3f2 solid;
+  background-color: #ffffff;
+  border-radius: 10px;
+  margin: 5px 0 5px 0;
+  cursor: grab;
+  overflow: hidden;
 }
 
-.kanban-board__card-container--place-holder{
-    min-width: 150px;
-    min-height: 200px;
-    border: 1px rosybrown solid;
-    background-color: #f2f2f5;
-    border-radius: 5px;
-    margin: 5px 0 5px 0;
-    opacity: 0.4;
+.kanban-board__card-container--place-holder {
+  min-width: 150px;
+  min-height: 200px;
+  border: 1px rosybrown solid;
+  background-color: #f2f2f5;
+  border-radius: 5px;
+  margin: 5px 0 5px 0;
+  opacity: 0.4;
 }
 
-.kanban-board__card-container--dragged{
-    transform: rotate(5deg);
-    cursor:grabbing;
+.kanban-board__card-container--dragged {
+  transform: rotate(5deg);
+  cursor: grabbing;
 }
 
-.kanban-board__card-image-container{}
+.kanban-board__card-image-container {
+  width: 100%;
+  max-height: 163px;
+  display: flex;
+  justify-content: center;
+  overflow: hidden;
+  background: #eeeef4;
+  min-width: 240px;
+  height: 163px;
+}
 
-.kanban-board__card-image{}
+.kanban-board__card-image {
+  object-fit: scale-down;
+}
 
-.kanban-board__card-header{}
+.kanban-board__card-header {
+  font-size: 14px;
+  font-weight: 600;
+  font-family: 'Inter', ui-sans-serif, system-ui, sans-serif;
+  padding: 5px 10px;
+  display: flex;
+  flex-wrap: wrap;
+  max-width: 240px;
+  line-height: 19px;
+  margin-top: 25px;
+}
 
+.kanban-board__card-with_image .kanban-board__card-header {
+  margin-top: 0px;
+}
 
 /** card additional field*/
-.kanban-board__card-additional-fields-container{}
+.kanban-board__card-additional-fields-container {
+  margin-bottom: 10px;
+}
+
+.kanban-board__card-additional-field-select-radio-renderer,
+.kanban-board__card-additional-field-default-renderer {
+  padding: 0px 10px;
+}
+
+.kanban-board__card-additional-field-select-radio-renderer-title,
+.kanban-board__card-additional-field-default-renderer-title {
+  color: #8ea1b8;
+  margin-right: 5px;
+  font-size: 12px;
+  font-weight: bold;
+  text-transform: capitalize;
+}
+
+.kanban-board__card-additional-field-select-radio-renderer-value,
+.kanban-board__card-additional-field-default-renderer-value {
+  color: #000000;
+  font-size: 12px;
+  font-weight: normal;
+}
