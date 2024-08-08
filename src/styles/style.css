@@ -19,8 +19,8 @@
 
 .mode-dark .kanban-board__container {
   /* background-color: #020617;
-  border: #1e293b solid 1px;
-  overflow-x: scroll; */
+  border: #1e293b solid 1px; */
+  /* overflow-x: scroll; */
 }
 
 /** loader */
@@ -141,11 +141,13 @@
   margin-bottom: 10px;
 }
 
+.kanban-board__card-additional-field-checkbox-renderer,
 .kanban-board__card-additional-field-select-radio-renderer,
 .kanban-board__card-additional-field-default-renderer {
   padding: 0px 10px;
 }
 
+.kanban-board__card-additional-field-checkbox-renderer-title,
 .kanban-board__card-additional-field-select-radio-renderer-title,
 .kanban-board__card-additional-field-default-renderer-title {
   color: #8ea1b8;

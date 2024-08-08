@@ -15,7 +15,10 @@ const AdditionalDataRenderer = ({ data, dataKey, type }) => {
 
   const checkBoxRenderer = (dataKey, data) => (
     <div className="kanban-board__card-additional-field-checkbox-renderer">
-      {dataKey}: <input type={'checkbox'} checked={data === true} readOnly />
+      <span className="kanban-board__card-additional-field-checkbox-renderer-title">
+        {dataKey}:
+      </span>
+      <input type={'checkbox'} checked={data === true} readOnly />
     </div>
   );
 
