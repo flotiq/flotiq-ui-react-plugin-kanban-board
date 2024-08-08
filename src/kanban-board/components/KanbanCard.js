@@ -28,7 +28,7 @@ const AdditionalDataRenderer = ({ data, dataKey, type }) => {
         {dataKey}:
       </span>
       <span className="kanban-board__card-additional-field-select-radio-renderer-value">
-        {data}
+        {data ? data : '-'}
       </span>
     </div>
   );
