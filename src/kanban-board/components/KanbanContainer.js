@@ -30,10 +30,13 @@ const KanbanContainer = ({
   const [selectedCard, setSelectedCard] = useState(null);
 
   const { apiClient, getApiUrl } = client;
-  const getCardValueFromConfig = (configKey, contentObject, config) => {
-    const objectKey = config[configKey];
-    return contentObject[objectKey];
-  };
+  const getCardValueFromConfig = useCallback(
+    (configKey, contentObject, config) => {
+      const objectKey = config[configKey];
+      return contentObject[objectKey];
+    },
+    [],
+  );
 
   const getImageFromCo = useCallback(
     (configKey, contentObject, config) => {
@@ -58,9 +61,9 @@ const KanbanContainer = ({
 
       setIsLoading(false);
     });
-  }, [apiClient]);
+  }, [apiClient, toast]);
 
-  useEffect(() => fetchContentObjects(), [apiClient]);
+  useEffect(() => fetchContentObjects(), [fetchContentObjects]);
 
   const deleteCard = useCallback(
     async (cardId) => {
@@ -93,7 +96,7 @@ const KanbanContainer = ({
       }
       toast.error(i18n.t('FetchError'));
     },
-    [openModal],
+    [openModal, apiClient, toast, fetchContentObjects],
   );
 
   const cardData = useMemo(() => {
@@ -132,7 +135,13 @@ const KanbanContainer = ({
       return acc;
     }, {});
     // return acc;
-  }, [contentObjects, getCardValueFromConfig, getImageFromCo]);
+  }, [
+    contentObjects,
+    getCardValueFromConfig,
+    getImageFromCo,
+    contentDefinition,
+    pluginConfig,
+  ]);
 
   useEffect(() => {
     const cardsObj = {};
@@ -146,14 +155,7 @@ const KanbanContainer = ({
     });
 
     setCards(cardsObj);
-  }, [
-    kanbanColumns,
-    contentObjects,
-    contentDefinition,
-    selectedField,
-    getImageFromCo,
-    pluginConfig,
-  ]);
+  }, [kanbanColumns, contentObjects, cardData, selectedField]);
 
   const sensors = useSensors(
     useSensor(PointerSensor, {
@@ -338,7 +340,7 @@ const KanbanContainer = ({
           : loader}
       </div>
     ),
-    [kanbanColumns, cards, isLoading, loader],
+    [kanbanColumns, cards, isLoading, loader, deleteCard],
   );
 
   return (
