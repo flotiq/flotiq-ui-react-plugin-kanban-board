@@ -10,6 +10,8 @@ const updateApp = (
   apiClient,
   pluginConfig,
   contentDefinition,
+  openModal,
+  toast,
 ) => {
   root.render(
     <KanbanContainer
@@ -18,6 +20,8 @@ const updateApp = (
       client={apiClient}
       pluginConfig={pluginConfig}
       contentDefinition={contentDefinition}
+      openModal={openModal}
+      toast={toast}
     />,
   );
 };
@@ -29,6 +33,8 @@ const initApp = (
   apiClient,
   pluginConfig,
   contentDefinition,
+  openModal,
+  toast,
 ) => {
   const root = ReactDOM.createRoot(div);
   updateApp(
@@ -38,6 +44,8 @@ const initApp = (
     apiClient,
     pluginConfig,
     contentDefinition,
+    openModal,
+    toast,
   );
   return root;
 };
@@ -48,6 +56,8 @@ export const handleBoardPlugin = (
   pluginInfo,
   client,
   getApiUrl,
+  openModal,
+  toast,
 ) => {
   if (!config.contentTypes.includes(contentTypeName) || !contentType) {
     return null;
@@ -71,6 +81,8 @@ export const handleBoardPlugin = (
       },
       pluginConfig,
       contentType,
+      openModal,
+      toast,
     );
     return cachedApp.element;
   }
@@ -88,6 +100,8 @@ export const handleBoardPlugin = (
       },
       pluginConfig,
       contentType,
+      openModal,
+      toast,
     ),
     key,
   );

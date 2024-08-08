@@ -19,7 +19,11 @@ const loadStyles = () => {
 
 registerFn(
   pluginInfo,
-  (handler, client, { getPluginSettings, getLanguage, getApiUrl }) => {
+  (
+    handler,
+    client,
+    { getPluginSettings, getLanguage, getApiUrl, openModal, toast },
+  ) => {
     loadStyles();
 
     const language = getLanguage();
@@ -43,13 +47,14 @@ registerFn(
 
     handler.on('flotiq.content-objects-view::render', (data) => {
       const pluginSettings = parsePluginSettings(getPluginSettings());
-
       return handleBoardPlugin(
         pluginSettings,
         data,
         pluginInfo,
         client,
         getApiUrl,
+        openModal,
+        toast,
       );
     });
 

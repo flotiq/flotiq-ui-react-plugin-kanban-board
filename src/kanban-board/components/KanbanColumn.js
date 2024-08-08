@@ -3,7 +3,7 @@ import KanbanCard from './KanbanCard';
 import { SortableContext } from '@dnd-kit/sortable';
 import { useDroppable } from '@dnd-kit/core';
 
-const KanbanColumn = ({ column, cardsArray }) => {
+const KanbanColumn = ({ column, cardsArray, deleteCard }) => {
   const [cards, setCards] = useState(cardsArray);
 
   const { setNodeRef } = useDroppable({
@@ -19,6 +19,7 @@ const KanbanColumn = ({ column, cardsArray }) => {
     () => cards?.map((card) => card?.contentObject?.id) || [],
     [cards],
   );
+
   return (
     <div className="kanban-board__column-container">
       <div className="kanban-board__column-header">{column}</div>
@@ -29,6 +30,7 @@ const KanbanColumn = ({ column, cardsArray }) => {
               card={card}
               contentObject={contentObject}
               key={contentObject.id}
+              deleteCard={deleteCard}
             />
           ))}
         </SortableContext>

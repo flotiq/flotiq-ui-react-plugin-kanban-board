@@ -11,6 +11,8 @@ import KanbanCard from './KanbanCard';
 import { createPortal } from 'react-dom';
 import { arrayMove } from '@dnd-kit/sortable';
 import { extractFieldType } from '../helpers';
+import debounce from 'debounce';
+import i18n from '../../i18n';
 
 const KanbanContainer = ({
   kanbanColumns,
@@ -18,6 +20,8 @@ const KanbanContainer = ({
   client,
   pluginConfig,
   contentDefinition,
+  openModal,
+  toast,
 }) => {
   const [contentObjects, setContentObjects] = useState([]);
   const [cards, setCards] = useState({});
@@ -43,14 +47,91 @@ const KanbanContainer = ({
     [getApiUrl],
   );
 
-  useEffect(() => {
+  const fetchContentObjects = useCallback(() => {
     setIsLoading(true);
     apiClient.list({ hydrate: 1 }).then((data) => {
-      if (data.status !== 200) return;
-      setContentObjects(data.body.data);
+      if (data.status === 200) {
+        setContentObjects(data.body.data);
+      } else {
+        toast.error(i18n.t('FetchError'));
+      }
+
       setIsLoading(false);
     });
   }, [apiClient]);
+
+  useEffect(() => fetchContentObjects(), [apiClient]);
+
+  const deleteCard = useCallback(
+    async (cardId) => {
+      const result = await openModal({
+        title: 'Warning!',
+        content: 'Are you sure that you want to delete 1 Content Object?',
+        buttons: [
+          {
+            key: 'result',
+            label: 'Delete',
+            result: true,
+          },
+          {
+            key: 'callback',
+            label: `Cancel`,
+            result: false,
+          },
+        ],
+      });
+
+      if (!result) return;
+
+      const deleteResult = await apiClient.delete(cardId);
+
+      if (deleteResult.status === 204) {
+        fetchContentObjects();
+        toast.success(i18n.t('CardDelete'));
+        return;
+      }
+      toast.error(i18n.t('FetchError'));
+    },
+    [openModal],
+  );
+
+  const cardData = useMemo(() => {
+    // const acc = [];
+    if (contentObjects.length === 0) return [];
+
+    return contentObjects?.reduce((acc, object) => {
+      const card = {
+        contentObject: object,
+        card: {
+          additionalFields: [
+            'additional_field_1',
+            'additional_field_2',
+            'additional_field_3',
+          ].map((additionalFieldKey) => ({
+            data: getCardValueFromConfig(
+              additionalFieldKey,
+              object,
+              pluginConfig,
+            ),
+            ...extractFieldType(
+              contentDefinition,
+              pluginConfig[additionalFieldKey],
+            ),
+          })),
+          title: getCardValueFromConfig('title', object, pluginConfig),
+          image: getImageFromCo('image', object, pluginConfig),
+        },
+      };
+
+      if (!acc) {
+        return { [object.id]: card };
+      }
+
+      acc[object.id] = card;
+      return acc;
+    }, {});
+    // return acc;
+  }, [contentObjects, getCardValueFromConfig, getImageFromCo]);
 
   useEffect(() => {
     const cardsObj = {};
@@ -58,28 +139,7 @@ const KanbanContainer = ({
       cardsObj[column] = [];
       contentObjects?.forEach((object) => {
         if (object[selectedField] === column) {
-          cardsObj[column].push({
-            contentObject: object,
-            card: {
-              additionalFields: [
-                'additional_field_1',
-                'additional_field_2',
-                'additional_field_3',
-              ].map((additionalFieldKey) => ({
-                data: getCardValueFromConfig(
-                  additionalFieldKey,
-                  object,
-                  pluginConfig,
-                ),
-                ...extractFieldType(
-                  contentDefinition,
-                  pluginConfig[additionalFieldKey],
-                ),
-              })),
-              title: getCardValueFromConfig('title', object, pluginConfig),
-              image: getImageFromCo('image', object, pluginConfig),
-            },
-          });
+          cardsObj[column].push(cardData[object.id]);
         }
       });
     });
@@ -248,6 +308,7 @@ const KanbanContainer = ({
               <KanbanColumn
                 column={column}
                 cardsArray={cards[column]}
+                deleteCard={deleteCard}
                 key={column}
               />
             ))
@@ -261,7 +322,7 @@ const KanbanContainer = ({
     <div className="kanban-board-ui-plugin__container">
       <DndContext
         onDragStart={onDragStart}
-        onDragOver={onDragOver}
+        onDragOver={debounce(onDragOver, 60)}
         onDragEnd={onDragEnd}
         sensors={sensors}
       >

@@ -48,7 +48,12 @@ const AdditionalDataRenderer = ({ data, dataKey, type }) => {
   }
 };
 
-const KanbanCard = ({ card, contentObject, additionalClasses = '' }) => {
+const KanbanCard = ({
+  card,
+  contentObject,
+  deleteCard,
+  additionalClasses = '',
+}) => {
   const {
     setNodeRef,
     attributes,
@@ -114,7 +119,6 @@ const KanbanCard = ({ card, contentObject, additionalClasses = '' }) => {
         ))}
       </div>
 
-      {console.log('contentObject', window, contentObject)}
       <div className="kanban-board__card-actions">
         <div className="actions-footer">
           <a
@@ -149,7 +153,11 @@ const KanbanCard = ({ card, contentObject, additionalClasses = '' }) => {
             rel="noreferrer"
             title="Duplicate"
           />
-          <span className="action-button icon-delete" title="Delete" />
+          <span
+            className="action-button icon-delete"
+            title="Delete"
+            onClick={() => deleteCard(contentObject.id)}
+          />
         </div>
       </div>
     </div>

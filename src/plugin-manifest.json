@@ -10,6 +10,7 @@
       "ctdName": "*",
       "canRead": true,
       "canUpdate": true,
+      "canDelete": true,
       "type": "CO"
     }
   ]
