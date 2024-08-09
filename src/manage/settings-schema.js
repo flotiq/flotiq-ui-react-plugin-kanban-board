@@ -20,7 +20,7 @@ export const getSchema = (contentTypes) => ({
       {
         type: 'object',
         properties: {
-          buttons: {
+          kanbanBoard: {
             type: 'array',
             items: {
               type: 'object',
@@ -64,9 +64,9 @@ export const getSchema = (contentTypes) => ({
     additionalProperties: false,
   },
   metaDefinition: {
-    order: ['buttons'],
+    order: ['kanbanBoard'],
     propertiesConfig: {
-      buttons: {
+      kanbanBoard: {
         items: {
           order: [
             'content_type',
@@ -152,9 +152,9 @@ export const getSchema = (contentTypes) => ({
 });
 
 const addToErrors = (errors, index, field, error) => {
-  if (!errors.buttons) errors.buttons = [];
-  if (!errors.buttons[index]) errors.buttons[index] = {};
-  errors.buttons[index][field] = error;
+  if (!errors.kanbanBoard) errors.kanbanBoard = [];
+  if (!errors.kanbanBoard[index]) errors.kanbanBoard[index] = {};
+  errors.kanbanBoard[index][field] = error;
 };
 
 export const getValidator = (
@@ -165,7 +165,7 @@ export const getValidator = (
 ) => {
   return (values) => {
     const errors = {};
-    values.buttons?.forEach((settings, index) => {
+    values.kanbanBoard?.forEach((settings, index) => {
       const { content_type } = settings;
 
       const requiredFields = ['content_type', 'source', 'title'];

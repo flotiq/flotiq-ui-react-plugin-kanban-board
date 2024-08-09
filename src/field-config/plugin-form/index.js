@@ -19,10 +19,10 @@ const insertSelectOptions = (config, options = [], emptyOptionMessage) => {
 
 export const handlePluginFormConfig = ({ name, config, formik }) => {
   const { index, type } =
-    name.match(/buttons\[(?<index>\d+)\].(?<type>\w+)/)?.groups || {};
+    name.match(/kanbanBoard\[(?<index>\d+)\].(?<type>\w+)/)?.groups || {};
 
   if (index == null || !type) return;
-  const ctd = formik.values.buttons[index].content_type;
+  const ctd = formik.values.kanbanBoard[index].content_type;
   const {
     sourceFields,
     cardTitleFields,
@@ -46,7 +46,7 @@ export const handlePluginFormConfig = ({ name, config, formik }) => {
         else formik.setFieldValue(name, value);
 
         keysToClearOnCtdChange.forEach((key) => {
-          formik.setFieldValue(`buttons[${index}].${key}`, '');
+          formik.setFieldValue(`kanbanBoard[${index}].${key}`, '');
         });
       };
       break;

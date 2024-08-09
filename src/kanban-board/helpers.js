@@ -2,7 +2,7 @@ export const parsePluginSettings = (settings) => {
   const parsedSettings = JSON.parse(settings || '{}');
   settings = {};
 
-  const contentTypes = parsedSettings?.buttons?.map((element) => {
+  const contentTypes = parsedSettings?.kanbanBoard?.map((element) => {
     settings[element.content_type] = element;
     return element.content_type;
   });
