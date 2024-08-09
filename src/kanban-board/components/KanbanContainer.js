@@ -356,11 +356,11 @@ const KanbanContainer = ({
     <div className="kanban-board-ui-plugin__container">
       <DndContext
         onDragStart={onDragStart}
-        onDragOver={debounce(onDragOver, 75)}
+        onDragOver={debounce(onDragOver, 60)}
         onDragEnd={onDragEnd}
         sensors={sensors}
         collisionDetection={pointerWithin}
-        autoScroll={{ acceleration: 0.75 }}
+        autoScroll={{ acceleration: 1 }}
       >
         {columnsContainer}
         {createPortal(
