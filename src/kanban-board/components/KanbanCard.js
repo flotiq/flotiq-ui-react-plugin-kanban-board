@@ -122,7 +122,7 @@ const KanbanCard = ({
       <h5 className="kanban-board__card-header">{card.title}</h5>
       <div className="kanban-board__card-additional-fields-container">
         {card.additionalFields
-          ?.filter(({ data }) => data)
+          ?.filter(({ key, type }) => key && type)
           ?.map((additionalField, index) => {
             return (
               <AdditionalDataRenderer
