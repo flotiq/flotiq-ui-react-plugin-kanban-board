@@ -52,18 +52,21 @@ const KanbanContainer = ({
 
   const fetchContentObjects = useCallback(() => {
     setIsLoading(true);
+    try {
+      client[contentDefinition.name]
+        .list({ hydrate: 1, limit: 50 })
+        .then((data) => {
+          if (data.status === 200) {
+            setContentObjects(data.body.data);
+          } else {
+            toast.error(i18n.t('FetchError'));
+          }
 
-    client[contentDefinition.name]
-      .list({ hydrate: 1, limit: 50 })
-      .then((data) => {
-        if (data.status === 200) {
-          setContentObjects(data.body.data);
-        } else {
-          toast.error(i18n.t('FetchError'));
-        }
-
-        setIsLoading(false);
-      });
+          setIsLoading(false);
+        });
+    } catch (e) {
+      toast.error(i18n.t('FetchError'));
+    }
   }, [client, contentDefinition.name, toast]);
 
   useEffect(() => fetchContentObjects(), [fetchContentObjects]);
