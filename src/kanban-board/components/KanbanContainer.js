@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import {
-  closestCenter, closestCorners,
+  closestCorners,
   DndContext,
   DragOverlay,
   PointerSensor,
