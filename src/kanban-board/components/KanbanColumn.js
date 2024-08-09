@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from 'react';
 import KanbanCard from './KanbanCard';
-import { SortableContext } from '@dnd-kit/sortable';
+import {SortableContext, verticalListSortingStrategy} from '@dnd-kit/sortable';
 import { useDroppable } from '@dnd-kit/core';
 
 const KanbanColumn = ({ column, cardsArray, deleteCard }) => {
@@ -24,7 +24,11 @@ const KanbanColumn = ({ column, cardsArray, deleteCard }) => {
     <div className="kanban-board__column-container">
       <div className="kanban-board__column-header">{column}</div>
       <div className="kanban-board__column-body" ref={setNodeRef}>
-        <SortableContext items={cardsIds} id={column}>
+        <SortableContext
+          items={cardsIds}
+          id={column}
+          strategy={verticalListSortingStrategy}
+        >
           {cards?.map(({ card, contentObject }) => (
             <KanbanCard
               card={card}

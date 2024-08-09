@@ -119,7 +119,7 @@ const KanbanCard = ({
 
   const style = {
     transition,
-    transform: CSS.Transform.toString(transform),
+    transform: CSS.Translate.toString(transform && { ...transform })
   };
 
   if (isDragging) {
@@ -139,7 +139,7 @@ const KanbanCard = ({
       {...listeners}
       {...attributes}
       className={
-        `kanban-board__card-container ${card.image && 'kanban-board__card-with_image'}` +
+        `kanban-board__card-container ${card.image && 'kanban-board__card-with_image'} ` +
         additionalClasses
       }
     >
