@@ -1,5 +1,5 @@
 import { useSortable } from '@dnd-kit/sortable';
-import { CSS } from '@dnd-kit/utilities';
+// import { CSS } from '@dnd-kit/utilities';
 
 const AdditionalDataRenderer = ({ data, dataKey, type }) => {
   const defaultRenderer = (dataKey, data) => (
@@ -94,7 +94,7 @@ const KanbanCard = ({
     setNodeRef,
     attributes,
     listeners,
-    transform,
+    // transform,
     transition,
     isDragging,
   } = useSortable({
@@ -108,7 +108,7 @@ const KanbanCard = ({
 
   const style = {
     transition,
-    transform: CSS.Transform.toString(transform),
+    // transform: CSS.Transform.toString(transform),
   };
 
   if (isDragging) {
