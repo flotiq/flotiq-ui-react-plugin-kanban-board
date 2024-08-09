@@ -357,7 +357,7 @@ const KanbanContainer = ({
             {selectedCard && (
               <KanbanCard
                 {...selectedCard}
-                additionalClasses={'kanban-board__card-container--dragged'}
+                additionalClasses={' kanban-board__card-container--dragged'}
               />
             )}
           </DragOverlay>,
