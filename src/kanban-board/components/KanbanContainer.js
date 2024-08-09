@@ -30,7 +30,6 @@ const KanbanContainer = ({
 
   const [selectedCard, setSelectedCard] = useState(null);
 
-  const { apiClient, getApiUrl } = client;
   const getCardValueFromConfig = useCallback(
     (configKey, contentObject, config) => {
       const objectKey = config[configKey];
@@ -46,14 +45,15 @@ const KanbanContainer = ({
 
       if (!image) return '';
 
-      return `${getApiUrl()}/image/0x0/${image.id}.${image.extension}`;
+      return client.getMediaUrl(image);
     },
-    [getApiUrl],
+    [client],
   );
 
   const fetchContentObjects = useCallback(() => {
     setIsLoading(true);
-    apiClient.list({ hydrate: 1 }).then((data) => {
+
+    client[contentDefinition.name].list({ hydrate: 1 }).then((data) => {
       if (data.status === 200) {
         setContentObjects(data.body.data);
       } else {
@@ -62,7 +62,7 @@ const KanbanContainer = ({
 
       setIsLoading(false);
     });
-  }, [apiClient, toast]);
+  }, [client, contentDefinition.name, toast]);
 
   useEffect(() => fetchContentObjects(), [fetchContentObjects]);
 
@@ -88,7 +88,7 @@ const KanbanContainer = ({
 
       if (!result) return;
 
-      const deleteResult = await apiClient.delete(cardId);
+      const deleteResult = await client[contentDefinition.name].delete(cardId);
 
       if (deleteResult.status === 204) {
         fetchContentObjects();
@@ -97,11 +97,10 @@ const KanbanContainer = ({
       }
       toast.error(i18n.t('FetchError'));
     },
-    [openModal, apiClient, toast, fetchContentObjects],
+    [openModal, client, contentDefinition.name, toast, fetchContentObjects],
   );
 
   const cardData = useMemo(() => {
-    // const acc = [];
     if (contentObjects.length === 0) return [];
 
     return contentObjects?.reduce((acc, object) => {
@@ -135,7 +134,6 @@ const KanbanContainer = ({
       acc[object.id] = card;
       return acc;
     }, {});
-    // return acc;
   }, [
     contentObjects,
     getCardValueFromConfig,
@@ -302,7 +300,7 @@ const KanbanContainer = ({
       if (activeCardId === overCardId) {
         const targetColumnId = active.data.current.contentObject[selectedField];
         try {
-          await apiClient.patch(activeCardId, {
+          await client[contentDefinition.name].patch(activeCardId, {
             [selectedField]: targetColumnId,
           });
         } catch (e) {
@@ -322,7 +320,14 @@ const KanbanContainer = ({
 
       setSelectedCard(null);
     },
-    [apiClient, handleCardOrderUpdate, selectedCard, selectedField, toast],
+    [
+      client,
+      contentDefinition.name,
+      handleCardOrderUpdate,
+      selectedCard,
+      selectedField,
+      toast,
+    ],
   );
 
   const loader = useMemo(
