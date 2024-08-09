@@ -30,13 +30,24 @@ export const handlePluginFormConfig = ({ name, config, formik }) => {
     cardAdditionalFields,
   } = getCachedElement(validFieldsCacheKey);
 
+  const keysToClearOnCtdChange = [
+    'source',
+    'title',
+    'image',
+    'additional_field_1',
+    'additional_field_2',
+    'additional_field_3',
+  ];
+
   switch (type) {
     case 'content_type':
       config.onChange = (_, value) => {
         if (value == null) formik.setFieldValue(name, '');
         else formik.setFieldValue(name, value);
 
-        formik.setFieldValue(`buttons[${index}].source`, '');
+        keysToClearOnCtdChange.forEach((key) => {
+          formik.setFieldValue(`buttons[${index}].${key}`, '');
+        });
       };
       break;
     case 'source':

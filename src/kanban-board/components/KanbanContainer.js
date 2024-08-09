@@ -4,6 +4,7 @@ import {
   DndContext,
   DragOverlay,
   PointerSensor,
+  pointerWithin,
   useSensor,
   useSensors,
 } from '@dnd-kit/core';
@@ -359,7 +360,7 @@ const KanbanContainer = ({
         onDragOver={debounce(onDragOver, 75)}
         onDragEnd={onDragEnd}
         sensors={sensors}
-        collisionDetection={closestCorners}
+        collisionDetection={pointerWithin}
       >
         {columnsContainer}
         {createPortal(

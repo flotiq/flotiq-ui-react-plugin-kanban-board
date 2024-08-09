@@ -165,87 +165,42 @@ export const getValidator = (
 ) => {
   return (values) => {
     const errors = {};
-    values.buttons?.forEach(
-      (
+    values.buttons?.forEach((settings, index) => {
+      const { content_type } = settings;
+
+      const requiredFields = ['content_type', 'source', 'title'];
+
+      requiredFields.forEach((requiredField) => {
+        if (!settings[requiredField]) {
+          addToErrors(errors, index, requiredField, i18n.t('FieldRequired'));
+        }
+      });
+
+      const validTypes = [
+        { key: 'source', validFieldsKeys: sourceFieldKeys[content_type] },
+        { key: 'title', validFieldsKeys: cardTitleFieldsKeys[content_type] },
+        { key: 'image', validFieldsKeys: cardImageFieldsKeys[content_type] },
         {
-          content_type,
-          source,
-          card_fields,
-          title,
-          image,
-          additional_field_1,
-          additional_field_2,
-          additional_field_3,
+          key: 'additional_field_1',
+          validFieldsKeys: cardAdditionalFieldsKeys[content_type],
         },
-        index,
-      ) => {
-        if (!content_type) {
-          addToErrors(errors, index, 'content_type', i18n.t('FieldRequired'));
-        }
+        {
+          key: 'additional_field_2',
+          validFieldsKeys: cardAdditionalFieldsKeys[content_type],
+        },
+        {
+          key: 'additional_field_3',
+          validFieldsKeys: cardAdditionalFieldsKeys[content_type],
+        },
+      ];
 
-        if (!source) {
-          addToErrors(errors, index, 'source', '');
-        } else if (!(sourceFieldKeys[content_type] || []).includes(source)) {
-          addToErrors(errors, index, 'source', '');
+      validTypes.forEach(({ key, validFieldsKeys }) => {
+        const value = settings[key];
+        if (value && !(validFieldsKeys || []).includes(value)) {
+          addToErrors(errors, index, key, i18n.t('WrongSource'));
         }
-
-        if (!title) {
-          addToErrors(errors, index, 'title', i18n.t('FieldRequired'));
-        } else if (!(cardTitleFieldsKeys[content_type] || []).includes(title)) {
-          addToErrors(errors, index, 'title', i18n.t('WrongSource'));
-        }
-
-        if (
-          image &&
-          !(cardImageFieldsKeys[content_type] || []).includes(image)
-        ) {
-          addToErrors(errors, index, 'image', i18n.t('WrongSource'));
-        }
-
-        if (
-          additional_field_1 &&
-          !(
-            (additional_field_1 && cardAdditionalFieldsKeys[content_type]) ||
-            []
-          ).includes(additional_field_1)
-        ) {
-          addToErrors(
-            errors,
-            index,
-            'additional_field_1',
-            i18n.t('WrongSource'),
-          );
-        }
-
-        if (
-          additional_field_2 &&
-          !(cardAdditionalFieldsKeys[content_type] || []).includes(
-            additional_field_2,
-          )
-        ) {
-          addToErrors(
-            errors,
-            index,
-            'additional_field_2',
-            i18n.t('WrongSource'),
-          );
-        }
-
-        if (
-          additional_field_3 &&
-          !(cardAdditionalFieldsKeys[content_type] || []).includes(
-            additional_field_3,
-          )
-        ) {
-          addToErrors(
-            errors,
-            index,
-            'additional_field_3',
-            i18n.t('WrongSource'),
-          );
-        }
-      },
-    );
+      });
+    });
 
     return errors;
   };

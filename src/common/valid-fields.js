@@ -1,6 +1,5 @@
 import pluginInfo from '../plugin-manifest.json';
 
-//@todo check if we can use radio
 export const validSourceFields = ['select', 'radio'];
 
 export const validCardTitleFields = ['text'];
