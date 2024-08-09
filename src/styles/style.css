@@ -85,6 +85,7 @@
 .kanban-board__card-container--place-holder {
   height: 200px;
   max-height: 200px;
+  min-height: 200px;
   border: 1px rosybrown solid;
   background-color: salmon;
   border-radius: 5px;
