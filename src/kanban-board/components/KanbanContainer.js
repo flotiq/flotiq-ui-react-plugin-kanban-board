@@ -197,124 +197,128 @@ const KanbanContainer = ({
     return cards;
   };
 
-  const handleCardColumnUpdate = (
-    currentColumnId,
-    targetColumnId,
-    activeCard,
-    overCardId = null,
-  ) => {
-    setCards((cards) => {
-      const cardsCopy = { ...cards };
+  const handleCardColumnUpdate = useCallback(
+    (currentColumnId, targetColumnId, activeCard, overCardId = null) => {
+      setCards((cards) => {
+        const cardsCopy = { ...cards };
 
-      cardsCopy[currentColumnId] = cardsCopy[currentColumnId].filter(
-        ({ contentObject }) => contentObject.id !== activeCard.contentObject.id,
-      );
+        cardsCopy[currentColumnId] = cardsCopy[currentColumnId].filter(
+          ({ contentObject }) =>
+            contentObject.id !== activeCard.contentObject.id,
+        );
 
-      const activeCardCopy = { ...activeCard };
+        const activeCardCopy = { ...activeCard };
 
-      activeCardCopy.contentObject = {
-        ...activeCardCopy.contentObject,
-        [selectedField]: targetColumnId,
+        activeCardCopy.contentObject = {
+          ...activeCardCopy.contentObject,
+          [selectedField]: targetColumnId,
+        };
+
+        cardsCopy[targetColumnId].push(activeCardCopy);
+        if (overCardId) {
+          changeCardOrder(
+            cardsCopy,
+            targetColumnId,
+            activeCard.contentObject.id,
+            overCardId,
+          );
+        }
+        return cardsCopy;
+      });
+    },
+    [selectedField],
+  );
+
+  const handleCardOrderUpdate = useCallback(
+    (currentCardId, targetCardId, currentColumn) => {
+      setCards((cards) => {
+        const cardCopy = { ...cards };
+        return changeCardOrder(
+          cardCopy,
+          currentColumn,
+          currentCardId,
+          targetCardId,
+        );
+      });
+    },
+    [],
+  );
+
+  const onDragOver = useCallback(
+    (event) => {
+      const { active, over } = event;
+
+      if (!over || !selectedCard) return;
+
+      const activeCardId = active.id;
+      const overCardId = over.id;
+
+      if (activeCardId === overCardId) return;
+
+      const isOverCard = over.data.current?.type === 'Card';
+      const isOverColumn = over.data.current?.type === 'Column';
+
+      const activeCard = {
+        card: active.data.current.card,
+        contentObject: active.data.current.contentObject,
       };
 
-      cardsCopy[targetColumnId].push(activeCardCopy);
-      if (overCardId) {
-        changeCardOrder(
-          cardsCopy,
+      const currentColumnId = active.data.current.sortable.containerId;
+
+      //handle dragging over card from other column
+      if (isOverCard) {
+        const targetColumnId = over.data.current.sortable.containerId;
+        const overCardId = over.id;
+
+        if (currentColumnId === targetColumnId) return;
+
+        handleCardColumnUpdate(
+          currentColumnId,
           targetColumnId,
-          activeCard.contentObject.id,
+          activeCard,
           overCardId,
         );
       }
-      return cardsCopy;
-    });
-  };
 
-  const handleCardOrderUpdate = (
-    currentCardId,
-    targetCardId,
-    currentColumn,
-  ) => {
-    setCards((cards) => {
-      const cardCopy = { ...cards };
-      return changeCardOrder(
-        cardCopy,
-        currentColumn,
-        currentCardId,
-        targetCardId,
-      );
-    });
-  };
+      //handle dragging over other column
+      if (isOverColumn) {
+        const targetColumnId = over.id;
+        handleCardColumnUpdate(currentColumnId, targetColumnId, activeCard);
+      }
+    },
+    [handleCardColumnUpdate, selectedCard],
+  );
 
-  const onDragOver = (event) => {
-    const { active, over } = event;
+  const onDragEnd = useCallback(
+    async (event) => {
+      const { active, over } = event;
 
-    if (!over || !selectedCard) return;
+      if (!over) return;
 
-    const activeCardId = active.id;
-    const overCardId = over.id;
-
-    if (activeCardId === overCardId) return;
-
-    const isOverCard = over.data.current?.type === 'Card';
-    const isOverColumn = over.data.current?.type === 'Column';
-
-    const activeCard = {
-      card: active.data.current.card,
-      contentObject: active.data.current.contentObject,
-    };
-
-    const currentColumnId = active.data.current.sortable.containerId;
-
-    //handle dragging over card from other column
-    if (isOverCard) {
-      const targetColumnId = over.data.current.sortable.containerId;
+      const activeCardId = active.id;
       const overCardId = over.id;
 
-      if (currentColumnId === targetColumnId) return;
+      if (activeCardId === overCardId) {
+        const targetColumnId = active.data.current.contentObject[selectedField];
+        await apiClient.patch(activeCardId, {
+          [selectedField]: targetColumnId,
+        });
 
-      handleCardColumnUpdate(
-        currentColumnId,
-        targetColumnId,
-        activeCard,
-        overCardId,
-      );
-    }
+        return;
+      }
 
-    //handle dragging over other column
-    if (isOverColumn) {
-      const targetColumnId = over.id;
-      handleCardColumnUpdate(currentColumnId, targetColumnId, activeCard);
-    }
-  };
+      const isOverCard = over.data.current?.type === 'Card';
 
-  const onDragEnd = async (event) => {
-    const { active, over } = event;
+      if (selectedCard && isOverCard) {
+        const currentColumn = active.data.current.sortable.containerId;
 
-    if (!over) return;
+        handleCardOrderUpdate(activeCardId, overCardId, currentColumn);
+      }
 
-    const activeCardId = active.id;
-    const overCardId = over.id;
-
-    if (activeCardId === overCardId) {
-      const targetColumnId = active.data.current.contentObject[selectedField];
-      await apiClient.patch(activeCardId, {
-        [selectedField]: targetColumnId,
-      });
-
-      return;
-    }
-
-    const isOverCard = over.data.current?.type === 'Card';
-
-    if (selectedCard && isOverCard) {
-      const currentColumn = active.data.current.sortable.containerId;
-
-      handleCardOrderUpdate(activeCardId, overCardId, currentColumn);
-    }
-
-    setSelectedCard(null);
-  };
+      setSelectedCard(null);
+    },
+    [apiClient, handleCardOrderUpdate, selectedCard, selectedField],
+  );
 
   const loader = useMemo(
     () => (
