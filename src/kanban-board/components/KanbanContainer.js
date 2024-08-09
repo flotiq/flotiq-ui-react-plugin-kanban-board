@@ -53,7 +53,7 @@ const KanbanContainer = ({
 
   const fetchContentObjects = useCallback(() => {
     setIsLoading(true);
-    apiClient.list({ hydrate: 1 }).then((data) => {
+    apiClient.list({ hydrate: 1, limit: 50 }).then((data) => {
       if (data.status === 200) {
         setContentObjects(data.body.data);
       } else {
@@ -101,7 +101,6 @@ const KanbanContainer = ({
   );
 
   const cardData = useMemo(() => {
-    // const acc = [];
     if (contentObjects.length === 0) return [];
 
     return contentObjects?.reduce((acc, object) => {
@@ -135,7 +134,6 @@ const KanbanContainer = ({
       acc[object.id] = card;
       return acc;
     }, {});
-    // return acc;
   }, [
     contentObjects,
     getCardValueFromConfig,
