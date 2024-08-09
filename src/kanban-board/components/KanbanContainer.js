@@ -1,6 +1,5 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import {
-  closestCorners,
   DndContext,
   DragOverlay,
   PointerSensor,
@@ -361,6 +360,7 @@ const KanbanContainer = ({
         onDragEnd={onDragEnd}
         sensors={sensors}
         collisionDetection={pointerWithin}
+        autoScroll={{ acceleration: 0.75 }}
       >
         {columnsContainer}
         {createPortal(
