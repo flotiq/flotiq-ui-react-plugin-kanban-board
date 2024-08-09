@@ -56,13 +56,16 @@ const KanbanContainer = ({
     client[contentDefinition.name]
       .list({ hydrate: 1, limit: 50 })
       .then((data) => {
-        if (data.status === 200) {
+        if (data.ok) {
           setContentObjects(data.body.data);
         } else {
           toast.error(i18n.t('FetchError'));
         }
 
         setIsLoading(false);
+      })
+      .catch(() => {
+        toast.error(i18n.t('FetchError'));
       });
   }, [client, contentDefinition.name, toast]);
 
@@ -93,7 +96,7 @@ const KanbanContainer = ({
         const deleteResult =
           await client[contentDefinition.name].delete(cardId);
 
-        if (deleteResult.status === 204) {
+        if (deleteResult.ok) {
           fetchContentObjects();
           toast.success(i18n.t('CardDelete'));
           return;
@@ -132,10 +135,6 @@ const KanbanContainer = ({
           image: getImageFromCo('image', object, pluginConfig),
         },
       };
-
-      if (!acc) {
-        return { [object.id]: card };
-      }
 
       acc[object.id] = card;
       return acc;
