@@ -2,9 +2,9 @@
 .kanban-board-ui-plugin__container {
   position: relative;
   width: 100%;
-  padding: 1.75rem 1.75rem 0 1.75rem;
+  padding: 1rem 1.75rem 0 1.75rem;
   min-height: 700px;
-  max-height: 94vh;
+  max-height: 95vh;
   overflow: scroll;
 }
 
@@ -15,6 +15,7 @@
   border: transparent solid 1px;
   border-radius: 0.5rem;
   display: flex;
+  gap: 20px;
 }
 
 /** column */
@@ -25,6 +26,8 @@
   position: relative;
   display: flex;
   flex-direction: column;
+  max-height: 87vh;
+  margin-bottom: 15px;
 }
 
 .kanban-board__column-header {
@@ -33,15 +36,9 @@
   font-size: 16px;
   padding: 5px;
   border-bottom: 1px solid #dae3f2;
-  margin: 5px 10px 5px 10px;
   display: flex;
   justify-content: center;
-  position: sticky;
-  top: 10px;
-  background-color: white;
-  z-index: 1;
-  border-top-right-radius: 8px;
-  border-top-left-radius: 8px;
+  position: relative;
 }
 
 .mode-dark .kanban-board__column-header {
@@ -52,23 +49,32 @@
 .kanban-board__column-body {
   display: flex;
   flex-direction: column;
-  padding: 15px 10px;
   flex: 1;
+  max-height: calc(100vh - 150px);
+  overflow-y: auto;
+  gap: 15px;
+  margin-top: 15px;
+}
+
+@media(max-width: 768px) {
+  .kanban-board__column-body {
+    max-height: calc(100vh - 190px);
+  }
 }
 
 /** card */
 
 .kanban-board__card-container {
-  min-width: 150px;
-  min-height: 130px;
+  min-width: 200px;
   border: 1px #dae3f2 solid;
   background-color: #ffffff;
   border-radius: 10px;
-  margin: 5px 0 5px 0;
   cursor: grab;
   overflow: hidden;
   position: relative;
   transition: display 0.5s;
+  box-sizing: border-box;
+  flex-shrink: 0;
 }
 
 .mode-dark .kanban-board__card-container {
@@ -77,13 +83,14 @@
 }
 
 .kanban-board__card-container--place-holder {
-  height: 200px !important;
-  max-height: 200px !important;
+  height: 200px;
+  max-height: 200px;
   border: 1px rosybrown solid;
   background-color: salmon;
   border-radius: 5px;
   margin: 5px 0 5px 0;
   opacity: 0.4;
+  box-sizing: border-box;
 }
 
 .kanban-board__card-container--dragged {
