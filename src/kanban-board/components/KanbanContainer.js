@@ -111,7 +111,7 @@ const KanbanContainer = ({
             'additional_field_1',
             'additional_field_2',
             'additional_field_3',
-          ].map((additionalFieldKey) => ({
+          ]?.map((additionalFieldKey) => ({
             data: getCardValueFromConfig(
               additionalFieldKey,
               object,
@@ -300,9 +300,13 @@ const KanbanContainer = ({
 
       if (activeCardId === overCardId) {
         const targetColumnId = active.data.current.contentObject[selectedField];
-        await apiClient.patch(activeCardId, {
-          [selectedField]: targetColumnId,
-        });
+        try {
+          await apiClient.patch(activeCardId, {
+            [selectedField]: targetColumnId,
+          });
+        } catch (e) {
+          toast.error(i18n.t('FetchError'));
+        }
 
         return;
       }
@@ -317,7 +321,7 @@ const KanbanContainer = ({
 
       setSelectedCard(null);
     },
-    [apiClient, handleCardOrderUpdate, selectedCard, selectedField],
+    [apiClient, handleCardOrderUpdate, selectedCard, selectedField, toast],
   );
 
   const loader = useMemo(

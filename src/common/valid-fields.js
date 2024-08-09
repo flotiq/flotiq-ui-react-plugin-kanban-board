@@ -31,7 +31,7 @@ export const getValidFields = (contentTypes) => {
 
   contentTypes
     ?.filter(({ internal }) => !internal)
-    .map(({ name, label }) => ({ value: name, label }));
+    ?.map(({ name, label }) => ({ value: name, label }));
 
   (contentTypes || []).forEach(({ name, metaDefinition }) => {
     sourceFields[name] = [];
@@ -50,12 +50,12 @@ export const getValidFields = (contentTypes) => {
       ([key, fieldConfig]) => {
         const inputType = fieldConfig?.inputType;
 
-        if (validSourceFields.includes(inputType)) {
+        if (validSourceFields?.includes(inputType)) {
           sourceFields[name].push({ value: key, label: fieldConfig.label });
           sourceFieldsKeys[name].push(key);
         }
 
-        if (validCardTitleFields.includes(inputType)) {
+        if (validCardTitleFields?.includes(inputType)) {
           cardTitleFields[name].push({
             value: key,
             label: fieldConfig.label,
@@ -64,7 +64,7 @@ export const getValidFields = (contentTypes) => {
         }
 
         if (
-          validCardImageFields.includes(inputType) &&
+          validCardImageFields?.includes(inputType) &&
           fieldConfig?.validation?.relationContenttype === '_media'
         ) {
           cardImageFields[name].push({
@@ -74,7 +74,7 @@ export const getValidFields = (contentTypes) => {
           cardImageFieldsKeys[name].push(key);
         }
 
-        if (validCardAdditionalFields.includes(inputType)) {
+        if (validCardAdditionalFields?.includes(inputType)) {
           cardAdditionalFields[name].push({
             value: key,
             label: fieldConfig.label,

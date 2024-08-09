@@ -59,7 +59,7 @@ export const handleBoardPlugin = (
   openModal,
   toast,
 ) => {
-  if (!config.contentTypes.includes(contentTypeName) || !contentType) {
+  if (!config.contentTypes?.includes(contentTypeName) || !contentType) {
     return null;
   }
 

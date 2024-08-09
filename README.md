@@ -10,6 +10,14 @@
 6. paste js code from `./build/static/js/main.xxxxxxxx.js` to Flotiq console
 7. navigate to affected Flotiq pages
 
+## Usage
+### Overview 
+
+This plugin transforms the default Flotiq `content-type-objects` page into a `Kanban board`, where content objects are 
+displayed as cards within their respective columns.
+
+### Configuration
+![](.docs/images/settings-screen.png)
 
 ## Deployment
 

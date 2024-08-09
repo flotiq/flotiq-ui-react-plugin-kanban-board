@@ -1,9 +1,20 @@
 import { getCachedElement } from '../../common/plugin-helpers';
-import { validFieldsCacheKey } from '../../common/valid-fields';
+import {
+  validCardAdditionalFields,
+  validCardTitleFields,
+  validFieldsCacheKey,
+  validSourceFields,
+} from '../../common/valid-fields';
+import i18n from '../../i18n';
 
-const insertSelectOptions = (config, options = []) => {
-  config.options = options;
+const insertSelectOptions = (config, options = [], emptyOptionMessage) => {
   config.additionalHelpTextClasses = 'break-normal';
+
+  if (options.length === 0) {
+    config.options = [{ label: emptyOptionMessage, disabled: true }];
+    return;
+  }
+  config.options = options;
 };
 
 export const handlePluginFormConfig = ({ name, config, formik }) => {
@@ -29,18 +40,42 @@ export const handlePluginFormConfig = ({ name, config, formik }) => {
       };
       break;
     case 'source':
-      insertSelectOptions(config, sourceFields?.[ctd]);
+      insertSelectOptions(
+        config,
+        sourceFields?.[ctd],
+        i18n.t('NonRequiredFieldsInCTD', {
+          types: validSourceFields.join(', '),
+        }),
+      );
       break;
     case 'title':
-      insertSelectOptions(config, cardTitleFields?.[ctd]);
+      insertSelectOptions(
+        config,
+        cardTitleFields?.[ctd],
+        i18n.t('NonRequiredFieldsInCTD', {
+          types: validCardTitleFields.join(', '),
+        }),
+      );
       break;
     case 'image':
-      insertSelectOptions(config, cardImageFields?.[ctd]);
+      insertSelectOptions(
+        config,
+        cardImageFields?.[ctd],
+        i18n.t('NonRequiredFieldsInCTD', {
+          types: ['Relation to media, media'],
+        }),
+      );
       break;
     case 'additional_field_1':
     case 'additional_field_2':
     case 'additional_field_3':
-      insertSelectOptions(config, cardAdditionalFields?.[ctd]);
+      insertSelectOptions(
+        config,
+        cardAdditionalFields?.[ctd],
+        i18n.t('NonRequiredFieldsInCTD', {
+          types: validCardAdditionalFields.join(', '),
+        }),
+      );
       break;
     default:
       break;

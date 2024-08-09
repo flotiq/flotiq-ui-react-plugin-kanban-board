@@ -1,5 +1,10 @@
 import i18n from '../i18n';
 import pluginInfo from '../plugin-manifest.json';
+import {
+  validCardAdditionalFields,
+  validCardTitleFields,
+  validSourceFields,
+} from '../common/valid-fields';
 
 export const getSchema = (contentTypes) => ({
   id: pluginInfo.id,
@@ -76,7 +81,9 @@ export const getSchema = (contentTypes) => ({
             source: {
               label: i18n.t('Source'),
               unique: false,
-              helpText: i18n.t('SourceHelpText'),
+              helpText: i18n.t('SourceHelpText', {
+                types: validSourceFields.join(', '),
+              }),
               inputType: 'select',
               options: [],
             },
@@ -91,35 +98,45 @@ export const getSchema = (contentTypes) => ({
             title: {
               label: i18n.t('Title'),
               unique: false,
-              helpText: i18n.t('TitleHelpText'),
+              helpText: i18n.t('TitleHelpText', {
+                types: validCardTitleFields.join(', '),
+              }),
               inputType: 'select',
               options: [],
             },
             image: {
               label: i18n.t('Image'),
               unique: false,
-              helpText: i18n.t('ImageHelpText'),
+              helpText: i18n.t('ImageHelpText', {
+                types: ['Relation to media, media'],
+              }),
               inputType: 'select',
               options: [],
             },
             additional_field_1: {
               label: i18n.t('AdditionalField1'),
               unique: false,
-              helpText: i18n.t('AdditionalFieldHelpText'),
+              helpText: i18n.t('AdditionalFieldHelpText', {
+                types: validCardAdditionalFields.join(', '),
+              }),
               inputType: 'select',
               options: [],
             },
             additional_field_2: {
               label: i18n.t('AdditionalField2'),
               unique: false,
-              helpText: i18n.t('AdditionalFieldHelpText'),
+              helpText: i18n.t('AdditionalFieldHelpText', {
+                types: validCardAdditionalFields.join(', '),
+              }),
               inputType: 'select',
               options: [],
             },
             additional_field_3: {
               label: i18n.t('AdditionalField3'),
               unique: false,
-              helpText: i18n.t('AdditionalFieldHelpText'),
+              helpText: i18n.t('AdditionalFieldHelpText', {
+                types: validCardAdditionalFields.join(', '),
+              }),
               inputType: 'select',
               options: [],
             },
@@ -179,13 +196,14 @@ export const getValidator = (
         }
 
         if (
-          title &&
+          image &&
           !(cardImageFieldsKeys[content_type] || []).includes(image)
         ) {
           addToErrors(errors, index, 'image', i18n.t('WrongSource'));
         }
 
         if (
+          additional_field_1 &&
           !(
             (additional_field_1 && cardAdditionalFieldsKeys[content_type]) ||
             []
@@ -212,6 +230,7 @@ export const getValidator = (
             i18n.t('WrongSource'),
           );
         }
+
         if (
           additional_field_3 &&
           !(cardAdditionalFieldsKeys[content_type] || []).includes(

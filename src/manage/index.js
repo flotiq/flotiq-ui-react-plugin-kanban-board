@@ -17,7 +17,7 @@ export const handleManagePlugin = ({ contentTypes, modalInstance }) => {
 
     const ctds = contentTypes
       ?.filter(({ internal }) => !internal)
-      .map(({ name, label }) => ({ value: name, label }));
+      ?.map(({ name, label }) => ({ value: name, label }));
 
     const {
       sourceFieldsKeys,
