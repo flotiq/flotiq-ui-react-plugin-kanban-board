@@ -77,8 +77,6 @@ const KanbanCard = ({
     id: contentObject.id,
     data: {
       type: 'Card',
-      card,
-      contentObject,
     },
   });
 

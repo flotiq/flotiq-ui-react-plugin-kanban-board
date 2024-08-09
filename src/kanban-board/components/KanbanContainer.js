@@ -12,7 +12,6 @@ import KanbanCard from './KanbanCard';
 import { createPortal } from 'react-dom';
 import { arrayMove } from '@dnd-kit/sortable';
 import { extractFieldType } from '../helpers';
-import debounce from 'debounce';
 import i18n from '../../i18n';
 
 const KanbanContainer = ({
@@ -45,7 +44,7 @@ const KanbanContainer = ({
 
       if (!image) return '';
 
-      return client.getMediaUrl(image);
+      return client.getMediaUrl(image, 200, 200);
     },
     [client],
   );
@@ -169,14 +168,15 @@ const KanbanContainer = ({
     }),
   );
 
-  const onDragStart = useCallback((event) => {
-    if (event.active.data.current?.type === 'Card') {
-      setSelectedCard({
-        card: event.active.data.current.card,
-        contentObject: event.active.data.current.contentObject,
-      });
-    }
-  }, []);
+  const onDragStart = useCallback(
+    (event) => {
+      if (event.active.data.current?.type === 'Card') {
+        const draggedCard = cardData[event.active.id];
+        setSelectedCard(draggedCard);
+      }
+    },
+    [cardData],
+  );
 
   const changeCardOrder = useCallback(
     (cards, currentColumn, currentCardId, targetCardId) => {
@@ -200,35 +200,30 @@ const KanbanContainer = ({
   );
 
   const handleCardColumnUpdate = useCallback(
-    (currentColumnId, targetColumnId, activeCard, overCardId = null) => {
+    (currentColumnId, targetColumnId, activeId, overCardId = null) => {
       setCards((cards) => {
         const cardsCopy = { ...cards };
 
         cardsCopy[currentColumnId] = cardsCopy[currentColumnId].filter(
-          ({ contentObject }) =>
-            contentObject.id !== activeCard.contentObject.id,
+          ({ contentObject }) => contentObject.id !== activeId,
         );
 
-        const activeCardCopy = { ...activeCard };
+        const activeCard = cardData[activeId];
 
-        activeCardCopy.contentObject = {
-          ...activeCardCopy.contentObject,
+        activeCard.contentObject = {
+          ...activeCard.contentObject,
           [selectedField]: targetColumnId,
         };
 
-        cardsCopy[targetColumnId].push(activeCardCopy);
+        cardsCopy[targetColumnId].push(activeCard);
+
         if (overCardId) {
-          changeCardOrder(
-            cardsCopy,
-            targetColumnId,
-            activeCard.contentObject.id,
-            overCardId,
-          );
+          changeCardOrder(cardsCopy, targetColumnId, activeCard.id, overCardId);
         }
         return cardsCopy;
       });
     },
-    [changeCardOrder, selectedField],
+    [cardData, changeCardOrder, selectedField],
   );
 
   const handleCardOrderUpdate = useCallback(
@@ -260,11 +255,6 @@ const KanbanContainer = ({
       const isOverCard = over.data.current?.type === 'Card';
       const isOverColumn = over.data.current?.type === 'Column';
 
-      const activeCard = {
-        card: active.data.current.card,
-        contentObject: active.data.current.contentObject,
-      };
-
       const currentColumnId = active.data.current.sortable.containerId;
 
       //handle dragging over card from other column
@@ -277,7 +267,7 @@ const KanbanContainer = ({
         handleCardColumnUpdate(
           currentColumnId,
           targetColumnId,
-          activeCard,
+          activeCardId,
           overCardId,
         );
       }
@@ -285,7 +275,7 @@ const KanbanContainer = ({
       //handle dragging over other column
       if (isOverColumn) {
         const targetColumnId = over.id;
-        handleCardColumnUpdate(currentColumnId, targetColumnId, activeCard);
+        handleCardColumnUpdate(currentColumnId, targetColumnId, activeCardId);
       }
     },
     [handleCardColumnUpdate, selectedCard],
@@ -301,7 +291,7 @@ const KanbanContainer = ({
       const overCardId = over.id;
 
       if (over.data.current?.type === 'Column' || activeCardId === overCardId) {
-        const targetColumnId = active.data.current.contentObject[selectedField];
+        const targetColumnId = active.data.current.sortable.containerId;
         try {
           await client[contentDefinition.name].patch(activeCardId, {
             [selectedField]: targetColumnId,
@@ -364,7 +354,7 @@ const KanbanContainer = ({
     <div className="kanban-board-ui-plugin__container">
       <DndContext
         onDragStart={onDragStart}
-        onDragOver={debounce(onDragOver, 60)}
+        onDragOver={onDragOver}
         onDragEnd={onDragEnd}
         sensors={sensors}
         collisionDetection={pointerWithin}
