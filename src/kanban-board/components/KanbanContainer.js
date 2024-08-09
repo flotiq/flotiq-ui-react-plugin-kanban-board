@@ -89,15 +89,19 @@ const KanbanContainer = ({
       });
 
       if (!result) return;
+      try {
+        const deleteResult =
+          await client[contentDefinition.name].delete(cardId);
 
-      const deleteResult = await client[contentDefinition.name].delete(cardId);
-
-      if (deleteResult.status === 204) {
-        fetchContentObjects();
-        toast.success(i18n.t('CardDelete'));
-        return;
+        if (deleteResult.status === 204) {
+          fetchContentObjects();
+          toast.success(i18n.t('CardDelete'));
+          return;
+        }
+        toast.error(i18n.t('FetchError'));
+      } catch (e) {
+        toast.error(i18n.t('FetchError'));
       }
-      toast.error(i18n.t('FetchError'));
     },
     [openModal, client, contentDefinition.name, toast, fetchContentObjects],
   );
@@ -299,7 +303,7 @@ const KanbanContainer = ({
       const activeCardId = active.id;
       const overCardId = over.id;
 
-      if (activeCardId === overCardId) {
+      if (over.data.current?.type === 'Column' || activeCardId === overCardId) {
         const targetColumnId = active.data.current.contentObject[selectedField];
         try {
           await client[contentDefinition.name].patch(activeCardId, {
