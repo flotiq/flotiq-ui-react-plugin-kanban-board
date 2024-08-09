@@ -1,23 +1,20 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useMemo } from 'react';
 import KanbanCard from './KanbanCard';
-import {SortableContext, verticalListSortingStrategy} from '@dnd-kit/sortable';
+import {
+  SortableContext,
+  verticalListSortingStrategy,
+} from '@dnd-kit/sortable';
 import { useDroppable } from '@dnd-kit/core';
 
 const KanbanColumn = ({ column, cardsArray, deleteCard }) => {
-  const [cards, setCards] = useState(cardsArray);
-
   const { setNodeRef } = useDroppable({
     id: column,
     data: { type: 'Column' },
   });
 
-  useEffect(() => {
-    setCards(cardsArray);
-  }, [cardsArray]);
-
   const cardsIds = useMemo(
-    () => cards?.map((card) => card?.contentObject?.id) || [],
-    [cards],
+    () => cardsArray?.map((card) => card?.contentObject?.id) || [],
+    [cardsArray],
   );
 
   return (
@@ -29,7 +26,7 @@ const KanbanColumn = ({ column, cardsArray, deleteCard }) => {
           id={column}
           strategy={verticalListSortingStrategy}
         >
-          {cards?.map(({ card, contentObject }) => (
+          {cardsArray?.map(({ card, contentObject }) => (
             <KanbanCard
               card={card}
               contentObject={contentObject}

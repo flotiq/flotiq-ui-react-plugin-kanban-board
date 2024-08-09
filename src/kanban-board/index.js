@@ -7,7 +7,7 @@ const updateApp = (
   root,
   kanbanCols,
   selectedField,
-  apiClient,
+  client,
   pluginConfig,
   contentDefinition,
   openModal,
@@ -17,7 +17,7 @@ const updateApp = (
     <KanbanContainer
       kanbanColumns={kanbanCols}
       selectedField={selectedField}
-      client={apiClient}
+      client={client}
       pluginConfig={pluginConfig}
       contentDefinition={contentDefinition}
       openModal={openModal}
@@ -30,7 +30,7 @@ const initApp = (
   div,
   kanbanCols,
   selectedField,
-  apiClient,
+  client,
   pluginConfig,
   contentDefinition,
   openModal,
@@ -41,7 +41,7 @@ const initApp = (
     root,
     kanbanCols,
     selectedField,
-    apiClient,
+    client,
     pluginConfig,
     contentDefinition,
     openModal,
@@ -75,10 +75,7 @@ export const handleBoardPlugin = (
       cachedApp.root,
       kanbanCols,
       selectedField,
-      {
-        apiClient: client[contentTypeName],
-        getApiUrl: getApiUrl,
-      },
+      client,
       pluginConfig,
       contentType,
       openModal,
@@ -94,10 +91,7 @@ export const handleBoardPlugin = (
       div,
       kanbanCols,
       selectedField,
-      {
-        apiClient: client[contentTypeName],
-        getApiUrl: getApiUrl,
-      },
+      client,
       pluginConfig,
       contentType,
       openModal,

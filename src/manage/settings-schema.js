@@ -60,7 +60,7 @@ export const getSchema = (contentTypes) => ({
         },
       },
     ],
-    required: ['api_key'],
+    required: [],
     additionalProperties: false,
   },
   metaDefinition: {
