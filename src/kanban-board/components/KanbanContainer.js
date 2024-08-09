@@ -179,28 +179,26 @@ const KanbanContainer = ({
     }
   }, []);
 
-  const changeCardOrder = (
-    cards,
-    currentColumn,
-    currentCardId,
-    targetCardId,
-  ) => {
-    const currentCardIndex = cards[currentColumn].findIndex(
-      ({ contentObject }) => contentObject.id === currentCardId,
-    );
+  const changeCardOrder = useCallback(
+    (cards, currentColumn, currentCardId, targetCardId) => {
+      const currentCardIndex = cards[currentColumn].findIndex(
+        ({ contentObject }) => contentObject.id === currentCardId,
+      );
 
-    const targetCardIndex = cards[currentColumn].findIndex(
-      ({ contentObject }) => contentObject.id === targetCardId,
-    );
+      const targetCardIndex = cards[currentColumn].findIndex(
+        ({ contentObject }) => contentObject.id === targetCardId,
+      );
 
-    cards[currentColumn] = arrayMove(
-      cards[currentColumn],
-      currentCardIndex,
-      targetCardIndex,
-    );
+      cards[currentColumn] = arrayMove(
+        cards[currentColumn],
+        currentCardIndex,
+        targetCardIndex,
+      );
 
-    return cards;
-  };
+      return cards;
+    },
+    [],
+  );
 
   const handleCardColumnUpdate = useCallback(
     (currentColumnId, targetColumnId, activeCard, overCardId = null) => {
@@ -231,7 +229,7 @@ const KanbanContainer = ({
         return cardsCopy;
       });
     },
-    [selectedField],
+    [changeCardOrder, selectedField],
   );
 
   const handleCardOrderUpdate = useCallback(
@@ -246,7 +244,7 @@ const KanbanContainer = ({
         );
       });
     },
-    [],
+    [changeCardOrder],
   );
 
   const onDragOver = useCallback(
