@@ -45,7 +45,7 @@ registerFn(
       }
     });
 
-    handler.on('flotiq.content-objects-view::render', (data) => {
+    handler.on('flotiq.grid::render', (data) => {
       const pluginSettings = parsePluginSettings(getPluginSettings());
       return handleBoardPlugin(
         pluginSettings,
