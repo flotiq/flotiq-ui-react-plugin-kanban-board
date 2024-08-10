@@ -168,13 +168,13 @@ export const getValidator = (
             value?.length > 0 &&
             !value.every((element) => validFieldsKeys.includes(element || []))
           ) {
-            addToErrors(errors, index, key, i18n.t('WrongSource'));
+            addToErrors(errors, index, key, i18n.t('WrongFieldType'));
           }
           return;
         }
 
         if (value && !(validFieldsKeys || []).includes(value)) {
-          addToErrors(errors, index, key, i18n.t('WrongSource'));
+          addToErrors(errors, index, key, i18n.t('WrongFieldType'));
         }
       });
     });

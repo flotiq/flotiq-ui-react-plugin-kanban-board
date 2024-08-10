@@ -21,7 +21,7 @@ i18n.init({
         AdditionalFieldsHelpText:
           'Pick the fields which will be used to display additional fields in card preview (optional). Allowed types: {{types}}',
         FieldRequired: 'Field is required',
-        WrongSource: 'This field type is not supported',
+        WrongFieldType: 'This field type is not supported',
         CardDelete: 'Content objects deleted (1)',
         FetchError:
           'Error occurred while connecting to the server, please try again later.',
@@ -46,7 +46,7 @@ i18n.init({
         AdditionalFieldsHelpText:
           'Wybierz pola, które będą użyte do wyświetlania dodatkowych pól w podglądzie karty (opcjonalne). Dozwolone typy: {{types}}',
         FieldRequired: 'Pole jest wymagane',
-        WrongSource: 'Ten typ pola nie jest wspierany',
+        WrongFieldType: 'Ten typ pola nie jest wspierany',
         CardDelete: 'Usunięto obiekty  (1)',
         FetchError:
           'Wystąpił błąd połączenia z serwerem, spróbuj ponownie później.',

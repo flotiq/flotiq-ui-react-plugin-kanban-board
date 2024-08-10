@@ -11,15 +11,40 @@ import KanbanColumn from './KanbanColumn';
 import KanbanCard from './KanbanCard';
 import { createPortal } from 'react-dom';
 import { arrayMove } from '@dnd-kit/sortable';
-import { extractFieldType } from '../helpers';
+import { extractFieldType, parseOptions } from '../helpers';
 import i18n from '../../i18n';
 
+const getCardValueFromConfig = (
+  key,
+  contentObject,
+  config,
+  contentType = {},
+) => {
+  const objectKey = config[key];
+  if (Array.isArray(objectKey)) {
+    return config[key]?.map((additionalFieldKey) => ({
+      data: getCardValueFromConfig(
+        additionalFieldKey,
+        contentObject,
+        config,
+        contentType,
+      ),
+      ...extractFieldType(contentType, additionalFieldKey),
+    }));
+  }
+  return contentObject[objectKey];
+};
+
+const getImageFromCo = (configKey, contentObject, config, client) => {
+  const objectKey = config[configKey];
+  const image = contentObject[objectKey]?.[0];
+  return image ? client.getMediaUrl(image, 200, 0) : '';
+};
+
 const KanbanContainer = ({
-  kanbanColumns,
-  selectedField,
   client,
   pluginConfig,
-  contentDefinition,
+  contentType,
   openModal,
   toast,
 }) => {
@@ -27,41 +52,18 @@ const KanbanContainer = ({
   const [cards, setCards] = useState({});
   const [isLoading, setIsLoading] = useState(false);
 
+  const selectedField = pluginConfig?.source;
+  const kanbanColumns = useMemo(
+    () => parseOptions(contentType, selectedField),
+    [contentType, selectedField],
+  );
+
   const [selectedCard, setSelectedCard] = useState(null);
-
-  const getCardValueFromConfig = useCallback(
-    (configKey, contentObject, config) => {
-      const objectKey = config[configKey];
-      return contentObject[objectKey];
-    },
-    [],
-  );
-
-  const getCardAdditionalFieldsFromConfig = useCallback(
-    (key, contentObject, config) =>
-      config[key]?.map((additionalFieldKey) => ({
-        data: getCardValueFromConfig(additionalFieldKey, contentObject, config),
-        ...extractFieldType(contentDefinition, additionalFieldKey),
-      })),
-    [getCardValueFromConfig, contentDefinition],
-  );
-
-  const getImageFromCo = useCallback(
-    (configKey, contentObject, config) => {
-      const objectKey = config[configKey];
-      const image = contentObject[objectKey]?.[0];
-
-      if (!image) return '';
-
-      return client.getMediaUrl(image, 200, 0);
-    },
-    [client],
-  );
 
   const fetchContentObjects = useCallback(() => {
     setIsLoading(true);
 
-    client[contentDefinition.name]
+    client[contentType.name]
       .list({ hydrate: 1, limit: 50 })
       .then((data) => {
         if (data.ok) {
@@ -74,7 +76,7 @@ const KanbanContainer = ({
       .catch(() => {
         toast.error(i18n.t('FetchError'));
       });
-  }, [client, contentDefinition.name, toast]);
+  }, [client, contentType.name, toast]);
 
   useEffect(() => fetchContentObjects(), [fetchContentObjects]);
 
@@ -100,8 +102,7 @@ const KanbanContainer = ({
 
       if (!result) return;
       try {
-        const deleteResult =
-          await client[contentDefinition.name].delete(cardId);
+        const deleteResult = await client[contentType.name].delete(cardId);
 
         if (deleteResult.ok) {
           fetchContentObjects();
@@ -113,7 +114,7 @@ const KanbanContainer = ({
         toast.error(i18n.t('FetchError'));
       }
     },
-    [openModal, client, contentDefinition.name, toast, fetchContentObjects],
+    [openModal, client, contentType.name, toast, fetchContentObjects],
   );
 
   const cardData = useMemo(() => {
@@ -123,25 +124,20 @@ const KanbanContainer = ({
       acc[object.id] = {
         contentObject: object,
         card: {
-          additionalFields: getCardAdditionalFieldsFromConfig(
+          additionalFields: getCardValueFromConfig(
             'additional_fields',
             object,
             pluginConfig,
+            contentType,
           ),
           title: getCardValueFromConfig('title', object, pluginConfig),
-          image: getImageFromCo('image', object, pluginConfig),
+          image: getImageFromCo('image', object, pluginConfig, client),
         },
       };
 
       return acc;
     }, {});
-  }, [
-    contentObjects,
-    getCardValueFromConfig,
-    getImageFromCo,
-    pluginConfig,
-    getCardAdditionalFieldsFromConfig,
-  ]);
+  }, [contentObjects, pluginConfig, contentType, client]);
 
   useEffect(() => {
     const cardsObj = {};
@@ -280,12 +276,10 @@ const KanbanContainer = ({
     async (event) => {
       const { active, over } = event;
 
-      if (!over) return;
-
       const activeCardId = active.id;
-      const overCardId = over.id;
+      const overCardId = over?.id;
 
-      const isOverCard = over.data.current?.type === 'Card';
+      const isOverCard = over?.data?.current?.type === 'Card';
 
       if (selectedCard && isOverCard) {
         const currentColumn = active.data.current.sortable.containerId;
@@ -296,7 +290,7 @@ const KanbanContainer = ({
       const targetColumnId = active.data.current.sortable.containerId;
       if (targetColumnId !== selectedCard.contentObject[selectedField]) {
         try {
-          await client[contentDefinition.name].patch(activeCardId, {
+          await client[contentType.name].patch(activeCardId, {
             [selectedField]: targetColumnId,
           });
         } catch (e) {
@@ -307,7 +301,7 @@ const KanbanContainer = ({
     },
     [
       client,
-      contentDefinition.name,
+      contentType.name,
       handleCardOrderUpdate,
       selectedCard,
       selectedField,

@@ -11,7 +11,9 @@ const insertSelectOptions = (config, options = [], emptyOptionMessage) => {
   config.additionalHelpTextClasses = 'break-normal';
 
   if (options.length === 0) {
-    config.options = [{ label: emptyOptionMessage, disabled: true }];
+    config.options = [
+      { value: 'empty', label: emptyOptionMessage, disabled: true },
+    ];
     return;
   }
   config.options = options;

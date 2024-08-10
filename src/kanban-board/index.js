@@ -1,103 +1,52 @@
 import ReactDOM from 'react-dom/client';
 import { addElementToCache, getCachedElement } from '../common/plugin-helpers';
-import { parseOptions } from './helpers';
 import KanbanContainer from './components/KanbanContainer';
 
 const updateApp = (
   root,
-  kanbanCols,
-  selectedField,
-  client,
-  pluginConfig,
-  contentDefinition,
-  openModal,
-  toast,
+  { client, pluginConfig, contentType, openModal, toast },
 ) => {
   root.render(
     <KanbanContainer
-      kanbanColumns={kanbanCols}
-      selectedField={selectedField}
       client={client}
       pluginConfig={pluginConfig}
-      contentDefinition={contentDefinition}
+      contentType={contentType}
       openModal={openModal}
       toast={toast}
     />,
   );
 };
 
-const initApp = (
-  div,
-  kanbanCols,
-  selectedField,
-  client,
-  pluginConfig,
-  contentDefinition,
-  openModal,
-  toast,
-) => {
+const initApp = (div, data) => {
   const root = ReactDOM.createRoot(div);
-  updateApp(
-    root,
-    kanbanCols,
-    selectedField,
-    client,
-    pluginConfig,
-    contentDefinition,
-    openModal,
-    toast,
-  );
+  updateApp(root, data);
   return root;
 };
 
 export const handleBoardPlugin = (
   config,
-  { contentTypeName, contentType },
-  pluginInfo,
+  { contentType },
   client,
-  getApiUrl,
   openModal,
   toast,
 ) => {
-  if (!config.contentTypes?.includes(contentTypeName) || !contentType) {
+  const pluginConfig = config[contentType?.name];
+
+  if (!pluginConfig || !contentType) {
     return null;
   }
 
-  const key = `${contentTypeName}-${contentType.id}`;
+  const key = `${contentType.name}-${contentType.id}`;
   const cachedApp = getCachedElement(key);
 
-  const pluginConfig = config.settings[contentTypeName];
-  const selectedField = pluginConfig?.source;
-  const kanbanCols = parseOptions(contentType, selectedField);
+  const data = { client, pluginConfig, contentType, openModal, toast };
 
   if (cachedApp) {
-    updateApp(
-      cachedApp.root,
-      kanbanCols,
-      selectedField,
-      client,
-      pluginConfig,
-      contentType,
-      openModal,
-      toast,
-    );
+    updateApp(cachedApp.root, data);
     return cachedApp.element;
   }
 
   const div = document.createElement('div');
-  addElementToCache(
-    div,
-    initApp(
-      div,
-      kanbanCols,
-      selectedField,
-      client,
-      pluginConfig,
-      contentType,
-      openModal,
-      toast,
-    ),
-    key,
-  );
+  addElementToCache(div, initApp(div, data), key);
   return div;
 };

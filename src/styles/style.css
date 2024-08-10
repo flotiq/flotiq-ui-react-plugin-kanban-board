@@ -15,7 +15,6 @@
   border: transparent solid 1px;
   border-radius: 0.5rem;
   display: flex;
-  gap: 20px;
 }
 
 /** column */
@@ -54,9 +53,11 @@
   overflow-y: auto;
   gap: 15px;
   margin-top: 15px;
+  padding-left: 10px;
+  padding-right: 10px;
 }
 
-@media(max-width: 768px) {
+@media (max-width: 768px) {
   .kanban-board__column-body {
     max-height: calc(100vh - 190px);
   }
@@ -218,7 +219,9 @@
   background-color: rgba(20, 16, 70, 0.8);
   opacity: 0;
   visibility: hidden;
-  transition: opacity 0.25s, visibility 0.25s ease-in-out;
+  transition:
+    opacity 0.25s,
+    visibility 0.25s ease-in-out;
 }
 
 .kanban-board__card-container:hover .kanban-board__card-actions {
@@ -259,12 +262,14 @@
 .action-button.icon-delete {
   border: 1px solid white;
   border-radius: 50%;
-  transition: background-color .2s, border-color .2s ease-in-out;
+  transition:
+    background-color 0.2s,
+    border-color 0.2s ease-in-out;
 }
 
 .action-button.icon-edit:hover {
-  background-color: #0083FC;
-  border-color: #0083FC;
+  background-color: #0083fc;
+  border-color: #0083fc;
 }
 
 .action-button.icon-edit svg {
@@ -273,8 +278,8 @@
 }
 
 .action-button.icon-duplicate:hover {
-  background-color: #34C759;
-  border-color: #34C759;
+  background-color: #34c759;
+  border-color: #34c759;
 }
 
 .action-button.icon-duplicate svg {
@@ -283,8 +288,8 @@
 }
 
 .action-button.icon-delete:hover {
-  background-color: #EB5757;
-  border-color: #EB5757;
+  background-color: #eb5757;
+  border-color: #eb5757;
 }
 
 .action-button.icon-delete svg {
