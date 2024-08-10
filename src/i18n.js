@@ -17,11 +17,9 @@ i18n.init({
         Image: 'Image',
         ImageHelpText:
           'Pick the field which will be used to display image in card preview (optional). Allowed types: {{types}}',
-        AdditionalField1: 'Additional Field 1',
-        AdditionalField2: 'Additional Field 2',
-        AdditionalField3: 'Additional Field 3',
-        AdditionalFieldHelpText:
-          'Pick the field which will be used to display additional field in card preview (optional). Allowed types: {{types}}',
+        AdditionalFields: 'Additional Fields',
+        AdditionalFieldsHelpText:
+          'Pick the fields which will be used to display additional fields in card preview (optional). Allowed types: {{types}}',
         FieldRequired: 'Field is required',
         WrongSource: 'This field type is not supported',
         CardDelete: 'Content objects deleted (1)',
@@ -44,11 +42,9 @@ i18n.init({
         Image: 'Obraz',
         ImageHelpText:
           'Wybierz pole, które będzie użyte do wyświetlania obrazu w podglądzie karty (opcjonalne). Dozwolone typy: {{types}}',
-        AdditionalField1: 'Dodatkowe Pole 1',
-        AdditionalField2: 'Dodatkowe Pole 2',
-        AdditionalField3: 'Dodatkowe Pole 3',
-        AdditionalFieldHelpText:
-          'Wybierz pole, które będzie użyte do wyświetlania dodatkowego pola w podglądzie karty (opcjonalne). Dozwolone typy: {{types}}',
+        AdditionalFields: 'Dodatkowe Pole 1',
+        AdditionalFieldsHelpText:
+          'Wybierz pola, które będą użyte do wyświetlania dodatkowych pól w podglądzie karty (opcjonalne). Dozwolone typy: {{types}}',
         FieldRequired: 'Pole jest wymagane',
         WrongSource: 'Ten typ pola nie jest wspierany',
         CardDelete: 'Usunięto obiekty  (1)',

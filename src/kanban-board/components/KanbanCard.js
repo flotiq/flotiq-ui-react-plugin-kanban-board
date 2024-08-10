@@ -77,8 +77,6 @@ const KanbanCard = ({
     id: contentObject.id,
     data: {
       type: 'Card',
-      card,
-      contentObject,
     },
   });
 
@@ -121,18 +119,16 @@ const KanbanCard = ({
       )}
       <h5 className="kanban-board__card-header">{card.title}</h5>
       <div className="kanban-board__card-additional-fields-container">
-        {card.additionalFields
-          ?.filter(({ key, type }) => key && type)
-          ?.map((additionalField, index) => {
-            return (
-              <AdditionalDataRenderer
-                key={`${additionalField.key}-${index}`}
-                dataKey={additionalField.key}
-                data={additionalField.data}
-                type={additionalField.type}
-              />
-            );
-          })}
+        {card.additionalFields?.map((additionalField, index) => {
+          return (
+            <AdditionalDataRenderer
+              key={`${additionalField.key}-${index}`}
+              dataKey={additionalField.key}
+              data={additionalField.data}
+              type={additionalField.type}
+            />
+          );
+        })}
       </div>
 
       <div className="kanban-board__card-actions">

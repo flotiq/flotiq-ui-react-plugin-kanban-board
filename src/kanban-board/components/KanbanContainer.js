@@ -12,7 +12,6 @@ import KanbanCard from './KanbanCard';
 import { createPortal } from 'react-dom';
 import { arrayMove } from '@dnd-kit/sortable';
 import { extractFieldType } from '../helpers';
-import debounce from 'debounce';
 import i18n from '../../i18n';
 
 const KanbanContainer = ({
@@ -38,6 +37,15 @@ const KanbanContainer = ({
     [],
   );
 
+  const getCardAdditionalFieldsFromConfig = useCallback(
+    (key, contentObject, config) =>
+      config[key]?.map((additionalFieldKey) => ({
+        data: getCardValueFromConfig(additionalFieldKey, contentObject, config),
+        ...extractFieldType(contentDefinition, additionalFieldKey),
+      })),
+    [getCardValueFromConfig, contentDefinition],
+  );
+
   const getImageFromCo = useCallback(
     (configKey, contentObject, config) => {
       const objectKey = config[configKey];
@@ -45,28 +53,27 @@ const KanbanContainer = ({
 
       if (!image) return '';
 
-      return client.getMediaUrl(image);
+      return client.getMediaUrl(image, 200, 0);
     },
     [client],
   );
 
   const fetchContentObjects = useCallback(() => {
     setIsLoading(true);
-    try {
-      client[contentDefinition.name]
-        .list({ hydrate: 1, limit: 50 })
-        .then((data) => {
-          if (data.status === 200) {
-            setContentObjects(data.body.data);
-          } else {
-            toast.error(i18n.t('FetchError'));
-          }
 
-          setIsLoading(false);
-        });
-    } catch (e) {
-      toast.error(i18n.t('FetchError'));
-    }
+    client[contentDefinition.name]
+      .list({ hydrate: 1, limit: 50 })
+      .then((data) => {
+        if (data.ok) {
+          setContentObjects(data.body.data);
+        } else {
+          toast.error(i18n.t('FetchError'));
+        }
+        setIsLoading(false);
+      })
+      .catch(() => {
+        toast.error(i18n.t('FetchError'));
+      });
   }, [client, contentDefinition.name, toast]);
 
   useEffect(() => fetchContentObjects(), [fetchContentObjects]);
@@ -96,7 +103,7 @@ const KanbanContainer = ({
         const deleteResult =
           await client[contentDefinition.name].delete(cardId);
 
-        if (deleteResult.status === 204) {
+        if (deleteResult.ok) {
           fetchContentObjects();
           toast.success(i18n.t('CardDelete'));
           return;
@@ -113,42 +120,27 @@ const KanbanContainer = ({
     if (contentObjects.length === 0) return [];
 
     return contentObjects?.reduce((acc, object) => {
-      const card = {
+      acc[object.id] = {
         contentObject: object,
         card: {
-          additionalFields: [
-            'additional_field_1',
-            'additional_field_2',
-            'additional_field_3',
-          ]?.map((additionalFieldKey) => ({
-            data: getCardValueFromConfig(
-              additionalFieldKey,
-              object,
-              pluginConfig,
-            ),
-            ...extractFieldType(
-              contentDefinition,
-              pluginConfig[additionalFieldKey],
-            ),
-          })),
+          additionalFields: getCardAdditionalFieldsFromConfig(
+            'additional_fields',
+            object,
+            pluginConfig,
+          ),
           title: getCardValueFromConfig('title', object, pluginConfig),
           image: getImageFromCo('image', object, pluginConfig),
         },
       };
 
-      if (!acc) {
-        return { [object.id]: card };
-      }
-
-      acc[object.id] = card;
       return acc;
     }, {});
   }, [
     contentObjects,
     getCardValueFromConfig,
     getImageFromCo,
-    contentDefinition,
     pluginConfig,
+    getCardAdditionalFieldsFromConfig,
   ]);
 
   useEffect(() => {
@@ -161,7 +153,6 @@ const KanbanContainer = ({
         }
       });
     });
-
     setCards(cardsObj);
   }, [kanbanColumns, contentObjects, cardData, selectedField]);
 
@@ -173,68 +164,61 @@ const KanbanContainer = ({
     }),
   );
 
-  const onDragStart = useCallback((event) => {
-    if (event.active.data.current?.type === 'Card') {
-      setSelectedCard({
-        card: event.active.data.current.card,
-        contentObject: event.active.data.current.contentObject,
-      });
-    }
-  }, []);
+  const onDragStart = useCallback(
+    (event) => {
+      if (event.active.data.current?.type === 'Card') {
+        setSelectedCard({ ...cardData[event.active.id] });
+      }
+    },
+    [cardData],
+  );
 
-  const changeCardOrder = (
-    cards,
-    currentColumn,
-    currentCardId,
-    targetCardId,
-  ) => {
-    const currentCardIndex = cards[currentColumn].findIndex(
-      ({ contentObject }) => contentObject.id === currentCardId,
-    );
+  const changeCardOrder = useCallback(
+    (cards, currentColumn, currentCardId, targetCardId) => {
+      const currentCardIndex = cards[currentColumn].findIndex(
+        ({ contentObject }) => contentObject.id === currentCardId,
+      );
 
-    const targetCardIndex = cards[currentColumn].findIndex(
-      ({ contentObject }) => contentObject.id === targetCardId,
-    );
+      const targetCardIndex = cards[currentColumn].findIndex(
+        ({ contentObject }) => contentObject.id === targetCardId,
+      );
 
-    cards[currentColumn] = arrayMove(
-      cards[currentColumn],
-      currentCardIndex,
-      targetCardIndex,
-    );
+      cards[currentColumn] = arrayMove(
+        cards[currentColumn],
+        currentCardIndex,
+        targetCardIndex,
+      );
 
-    return cards;
-  };
+      return cards;
+    },
+    [],
+  );
 
   const handleCardColumnUpdate = useCallback(
-    (currentColumnId, targetColumnId, activeCard, overCardId = null) => {
+    (currentColumnId, targetColumnId, activeId, overCardId = null) => {
       setCards((cards) => {
         const cardsCopy = { ...cards };
 
         cardsCopy[currentColumnId] = cardsCopy[currentColumnId].filter(
-          ({ contentObject }) =>
-            contentObject.id !== activeCard.contentObject.id,
+          ({ contentObject }) => contentObject.id !== activeId,
         );
 
-        const activeCardCopy = { ...activeCard };
+        const activeCard = cardData[activeId];
 
-        activeCardCopy.contentObject = {
-          ...activeCardCopy.contentObject,
+        activeCard.contentObject = {
+          ...activeCard.contentObject,
           [selectedField]: targetColumnId,
         };
 
-        cardsCopy[targetColumnId].push(activeCardCopy);
+        cardsCopy[targetColumnId].push(activeCard);
+
         if (overCardId) {
-          changeCardOrder(
-            cardsCopy,
-            targetColumnId,
-            activeCard.contentObject.id,
-            overCardId,
-          );
+          changeCardOrder(cardsCopy, targetColumnId, activeCard.id, overCardId);
         }
         return cardsCopy;
       });
     },
-    [selectedField],
+    [cardData, changeCardOrder, selectedField],
   );
 
   const handleCardOrderUpdate = useCallback(
@@ -249,7 +233,7 @@ const KanbanContainer = ({
         );
       });
     },
-    [],
+    [changeCardOrder],
   );
 
   const onDragOver = useCallback(
@@ -266,11 +250,6 @@ const KanbanContainer = ({
       const isOverCard = over.data.current?.type === 'Card';
       const isOverColumn = over.data.current?.type === 'Column';
 
-      const activeCard = {
-        card: active.data.current.card,
-        contentObject: active.data.current.contentObject,
-      };
-
       const currentColumnId = active.data.current.sortable.containerId;
 
       //handle dragging over card from other column
@@ -283,7 +262,7 @@ const KanbanContainer = ({
         handleCardColumnUpdate(
           currentColumnId,
           targetColumnId,
-          activeCard,
+          activeCardId,
           overCardId,
         );
       }
@@ -291,7 +270,7 @@ const KanbanContainer = ({
       //handle dragging over other column
       if (isOverColumn) {
         const targetColumnId = over.id;
-        handleCardColumnUpdate(currentColumnId, targetColumnId, activeCard);
+        handleCardColumnUpdate(currentColumnId, targetColumnId, activeCardId);
       }
     },
     [handleCardColumnUpdate, selectedCard],
@@ -306,19 +285,6 @@ const KanbanContainer = ({
       const activeCardId = active.id;
       const overCardId = over.id;
 
-      if (over.data.current?.type === 'Column' || activeCardId === overCardId) {
-        const targetColumnId = active.data.current.contentObject[selectedField];
-        try {
-          await client[contentDefinition.name].patch(activeCardId, {
-            [selectedField]: targetColumnId,
-          });
-        } catch (e) {
-          toast.error(i18n.t('FetchError'));
-        }
-
-        return;
-      }
-
       const isOverCard = over.data.current?.type === 'Card';
 
       if (selectedCard && isOverCard) {
@@ -327,6 +293,16 @@ const KanbanContainer = ({
         handleCardOrderUpdate(activeCardId, overCardId, currentColumn);
       }
 
+      const targetColumnId = active.data.current.sortable.containerId;
+      if (targetColumnId !== selectedCard.contentObject[selectedField]) {
+        try {
+          await client[contentDefinition.name].patch(activeCardId, {
+            [selectedField]: targetColumnId,
+          });
+        } catch (e) {
+          toast.error(i18n.t('FetchError'));
+        }
+      }
       setSelectedCard(null);
     },
     [
@@ -370,7 +346,7 @@ const KanbanContainer = ({
     <div className="kanban-board-ui-plugin__container">
       <DndContext
         onDragStart={onDragStart}
-        onDragOver={debounce(onDragOver, 60)}
+        onDragOver={onDragOver}
         onDragEnd={onDragEnd}
         sensors={sensors}
         collisionDetection={pointerWithin}

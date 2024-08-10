@@ -34,9 +34,7 @@ export const handlePluginFormConfig = ({ name, config, formik }) => {
     'source',
     'title',
     'image',
-    'additional_field_1',
-    'additional_field_2',
-    'additional_field_3',
+    'additional_fields',
   ];
 
   switch (type) {
@@ -77,9 +75,7 @@ export const handlePluginFormConfig = ({ name, config, formik }) => {
         }),
       );
       break;
-    case 'additional_field_1':
-    case 'additional_field_2':
-    case 'additional_field_3':
+    case 'additional_fields':
       insertSelectOptions(
         config,
         cardAdditionalFields?.[ctd],

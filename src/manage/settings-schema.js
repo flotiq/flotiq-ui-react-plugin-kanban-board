@@ -42,17 +42,8 @@ export const getSchema = (contentTypes) => ({
                   type: 'string',
                   minLength: 1,
                 },
-                additional_field_1: {
-                  type: 'string',
-                  minLength: 1,
-                },
-                additional_field_2: {
-                  type: 'string',
-                  minLength: 1,
-                },
-                additional_field_3: {
-                  type: 'string',
-                  minLength: 1,
+                additional_fields: {
+                  type: 'array',
                 },
               },
             },
@@ -73,9 +64,7 @@ export const getSchema = (contentTypes) => ({
             'source',
             'title',
             'image',
-            'additional_field_1',
-            'additional_field_2',
-            'additional_field_3',
+            'additional_fields',
           ],
           propertiesConfig: {
             source: {
@@ -113,30 +102,14 @@ export const getSchema = (contentTypes) => ({
               inputType: 'select',
               options: [],
             },
-            additional_field_1: {
-              label: i18n.t('AdditionalField1'),
+            additional_fields: {
+              label: i18n.t('AdditionalFields'),
               unique: false,
-              helpText: i18n.t('AdditionalFieldHelpText', {
+              helpText: i18n.t('AdditionalFieldsHelpText', {
                 types: validCardAdditionalFields.join(', '),
               }),
-              inputType: 'select',
-              options: [],
-            },
-            additional_field_2: {
-              label: i18n.t('AdditionalField2'),
-              unique: false,
-              helpText: i18n.t('AdditionalFieldHelpText', {
-                types: validCardAdditionalFields.join(', '),
-              }),
-              inputType: 'select',
-              options: [],
-            },
-            additional_field_3: {
-              label: i18n.t('AdditionalField3'),
-              unique: false,
-              helpText: i18n.t('AdditionalFieldHelpText', {
-                types: validCardAdditionalFields.join(', '),
-              }),
+              isMultiple: true,
+              useOptionsWithLabels: true,
               inputType: 'select',
               options: [],
             },
@@ -181,21 +154,25 @@ export const getValidator = (
         { key: 'title', validFieldsKeys: cardTitleFieldsKeys[content_type] },
         { key: 'image', validFieldsKeys: cardImageFieldsKeys[content_type] },
         {
-          key: 'additional_field_1',
-          validFieldsKeys: cardAdditionalFieldsKeys[content_type],
-        },
-        {
-          key: 'additional_field_2',
-          validFieldsKeys: cardAdditionalFieldsKeys[content_type],
-        },
-        {
-          key: 'additional_field_3',
+          key: 'additional_fields',
           validFieldsKeys: cardAdditionalFieldsKeys[content_type],
         },
       ];
 
       validTypes.forEach(({ key, validFieldsKeys }) => {
         const value = settings[key];
+
+        if (Array.isArray(value)) {
+          if (
+            value &&
+            value?.length > 0 &&
+            !value.every((element) => validFieldsKeys.includes(element || []))
+          ) {
+            addToErrors(errors, index, key, i18n.t('WrongSource'));
+          }
+          return;
+        }
+
         if (value && !(validFieldsKeys || []).includes(value)) {
           addToErrors(errors, index, key, i18n.t('WrongSource'));
         }
