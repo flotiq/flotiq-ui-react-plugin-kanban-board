@@ -250,11 +250,11 @@ const KanbanContainer = ({
       const isOverCard = over.data.current?.type === 'Card';
       const isOverColumn = over.data.current?.type === 'Column';
 
-      const currentColumnId = active.data.current.sortable.containerId;
+      const currentColumnId = active.data.current.sortable?.containerId;
 
       //handle dragging over card from other column
       if (isOverCard) {
-        const targetColumnId = over.data.current.sortable.containerId;
+        const targetColumnId = over.data.current.sortable?.containerId;
         const overCardId = over.id;
 
         if (currentColumnId === targetColumnId) return;
@@ -288,12 +288,12 @@ const KanbanContainer = ({
       const isOverCard = over?.data?.current?.type === 'Card';
 
       if (selectedCard && isOverCard) {
-        const currentColumn = active.data.current.sortable.containerId;
+        const currentColumn = active.data.current.sortable?.containerId;
 
         handleCardOrderUpdate(activeCardId, overCardId, currentColumn);
       }
 
-      const targetColumnId = active.data.current.sortable.containerId;
+      const targetColumnId = active.data.current.sortable?.containerId;
       if (targetColumnId !== selectedCard.contentObject[selectedField]) {
         try {
           await client[contentType.name].patch(activeCardId, {
