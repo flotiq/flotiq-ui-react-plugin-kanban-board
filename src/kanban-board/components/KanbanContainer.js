@@ -193,11 +193,12 @@ const KanbanContainer = ({
   const handleCardColumnUpdate = useCallback(
     (currentColumnId, targetColumnId, activeId, overCardId = null) => {
       setCards((cards) => {
-        const cardsCopy = { ...cards };
-
-        cardsCopy[currentColumnId] = cardsCopy[currentColumnId].filter(
-          ({ contentObject }) => contentObject.id !== activeId,
-        );
+        const cardsCopy = {
+          ...cards,
+          [currentColumnId]: cards[currentColumnId].filter(
+            ({ contentObject }) => contentObject.id !== activeId,
+          ),
+        };
 
         const activeCard = cardData[activeId];
 
@@ -206,6 +207,9 @@ const KanbanContainer = ({
           [selectedField]: targetColumnId,
         };
 
+        cardsCopy[targetColumnId] = cards[targetColumnId].filter(
+          ({ contentObject }) => contentObject.id !== activeId,
+        );
         cardsCopy[targetColumnId].push(activeCard);
 
         if (overCardId) {
@@ -275,6 +279,8 @@ const KanbanContainer = ({
   const onDragEnd = useCallback(
     async (event) => {
       const { active, over } = event;
+
+      if (!selectedCard) return;
 
       const activeCardId = active.id;
       const overCardId = over?.id;
