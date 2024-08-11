@@ -1,6 +1,6 @@
 {
-  "name": "flotiq-plugin-unejected",
-  "version": "0.1.0",
+  "name": "flotiq-plugin-kanban-view",
+  "version": "1.0.0",
   "private": true,
   "dependencies": {
     "@dnd-kit/core": "^6.1.0",

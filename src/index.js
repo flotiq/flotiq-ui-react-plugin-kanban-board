@@ -4,9 +4,10 @@ import { parsePluginSettings } from './kanban-board/helpers';
 import { handlePluginFormConfig } from './field-config/plugin-form';
 import { handleManagePlugin } from './manage';
 import { handleBoardPlugin } from './kanban-board';
-
-import cssString from './styles/style.css';
 import i18n from 'i18next';
+
+/* eslint import/no-webpack-loader-syntax: off */
+import cssString from '!!raw-loader!./styles/style.css';
 
 const loadStyles = () => {
   if (!document.getElementById(`${pluginInfo.id}-styles`)) {
