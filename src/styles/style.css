@@ -1,0 +1,298 @@
+/** container */
+.kanban-board-ui-plugin__container {
+  position: relative;
+  width: 100%;
+  padding: 1rem 1.75rem 0 1.75rem;
+  min-height: 700px;
+  height: 93vh;
+  overflow: scroll;
+}
+
+.kanban-board__container {
+  width: 100%;
+  height: 100%;
+  background-color: transparent;
+  border: transparent solid 1px;
+  border-radius: 0.5rem;
+  display: flex;
+}
+
+/** column */
+
+.kanban-board__column-container {
+  border: 2px solid transparent;
+  min-width: 250px;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  max-height: 90vh;
+  margin-bottom: 15px;
+}
+
+.kanban-board__column-header {
+  color: #8ea1b8;
+  font-weight: 600;
+  font-size: 16px;
+  padding: 5px;
+  border-bottom: 1px solid #dae3f2;
+  display: flex;
+  justify-content: center;
+  position: relative;
+}
+
+.mode-dark .kanban-board__column-header {
+  color: rgb(229, 231, 235);
+  border-bottom: 1px solid rgb(30 41 59);
+}
+
+.kanban-board__column-body {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  max-height: calc(100vh - 150px);
+  overflow-y: auto;
+  gap: 15px;
+  margin-top: 15px;
+  padding-left: 10px;
+  padding-right: 10px;
+}
+
+@media (max-width: 768px) {
+  .kanban-board__column-body {
+    max-height: calc(100vh - 190px);
+  }
+}
+
+/** card */
+
+.kanban-board__card-container {
+  min-width: 200px;
+  border: 1px #dae3f2 solid;
+  background-color: #ffffff;
+  border-radius: 10px;
+  cursor: grab;
+  overflow: hidden;
+  position: relative;
+  transition: display 0.5s;
+  box-sizing: border-box;
+  flex-shrink: 0;
+}
+
+.mode-dark .kanban-board__card-container {
+  background-color: #020617;
+  border: 1px #1e293b solid;
+}
+
+.kanban-board__card-container--place-holder {
+  height: 100px;
+  max-height: 100px;
+  min-height: 100px;
+  border: 1px rosybrown solid;
+  background-color: salmon;
+  border-radius: 5px;
+  opacity: 0.4;
+  box-sizing: border-box;
+}
+
+.kanban-board__card-container--dragged {
+  transform: rotate(5deg);
+  cursor: grabbing;
+}
+
+.kanban-board__card-image-container {
+  width: 100%;
+  max-height: 163px;
+  display: flex;
+  justify-content: center;
+  overflow: hidden;
+  background: #eeeef4;
+  height: 163px;
+}
+
+.mode-dark .kanban-board__card-image-container {
+  background: #3b3953;
+}
+
+.kanban-board__card-image {
+  object-fit: scale-down;
+  width: 100%;
+}
+
+.kanban-board__card-header {
+  font-size: 14px;
+  font-weight: 600;
+  font-family: 'Inter', ui-sans-serif, system-ui, sans-serif;
+  padding: 5px 10px;
+  display: flex;
+  flex-wrap: wrap;
+  max-width: 240px;
+  line-height: 19px;
+  margin-top: 6px;
+  z-index: 99999;
+}
+
+.mode-dark .kanban-board__card-header {
+  color: white;
+}
+
+.kanban-board__card-with_image .kanban-board__card-header {
+  margin-top: 0px;
+}
+
+/** card additional field*/
+.kanban-board__card-additional-fields-container {
+  margin-bottom: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.kanban-board__card-additional-field-checkbox-renderer,
+.kanban-board__card-additional-field-select-radio-renderer,
+.kanban-board__card-additional-field-default-renderer {
+  padding: 0px 10px;
+  display: flex;
+}
+
+.kanban-board__card-additional-field-checkbox-renderer-title,
+.kanban-board__card-additional-field-select-radio-renderer-title,
+.kanban-board__card-additional-field-default-renderer-title {
+  color: #8ea1b8;
+  margin-right: 5px;
+  font-size: 12px;
+  font-weight: bold;
+  text-transform: capitalize;
+}
+
+.kanban-board__card-additional-field-select-radio-renderer-value,
+.kanban-board__card-additional-field-default-renderer-value,
+.kanban-board__card-additional-field-checkbox-renderer-value {
+  color: #000000;
+  font-size: 12px;
+  font-weight: normal;
+}
+
+.mode-dark .kanban-board__card-additional-field-select-radio-renderer-value,
+.mode-dark .kanban-board__card-additional-field-default-renderer-value {
+  color: white;
+  font-size: 12px;
+  font-weight: normal;
+}
+
+.kanban-board__card-additional-field-checkbox-renderer-value svg {
+  width: 16px;
+  height: 16px;
+}
+
+/** loader */
+.kanban-board-ui-plugin__loader-container {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.kanban-board-ui-plugin__loader {
+  width: 40px;
+  height: 40px;
+  aspect-ratio: 1;
+  border-radius: 50%;
+  border: 5px solid #a5b4c6;
+  border-right-color: #0083fc;
+  animation: animation-loader 1s infinite linear;
+}
+
+@keyframes animation-loader {
+  to {
+    transform: rotate(1turn);
+  }
+}
+
+.kanban-board__card-actions {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  padding: 10px;
+  background-color: rgba(20, 16, 70, 0.8);
+  opacity: 0;
+  visibility: hidden;
+  transition:
+    opacity 0.25s,
+    visibility 0.25s ease-in-out;
+}
+
+.kanban-board__card-container:hover .kanban-board__card-actions {
+  display: block;
+  opacity: 1;
+  visibility: visible;
+}
+
+.kanban-board__card-actions .kanban-board__card-header {
+  color: white;
+  cursor: text;
+  font-size: 16px;
+}
+
+.actions-footer {
+  display: flex;
+  position: absolute;
+  gap: 7px;
+  bottom: 0;
+  left: 0;
+  align-items: center;
+  width: 100%;
+  justify-content: flex-end;
+  padding: 10px 10px;
+}
+
+.action-button {
+  width: 28px;
+  height: 28px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.action-button.icon-edit,
+.action-button.icon-duplicate,
+.action-button.icon-delete {
+  border: 1px solid white;
+  border-radius: 50%;
+  transition:
+    background-color 0.2s,
+    border-color 0.2s ease-in-out;
+}
+
+.action-button.icon-edit:hover {
+  background-color: #0083fc;
+  border-color: #0083fc;
+}
+
+.action-button.icon-edit svg {
+  width: 13px;
+  height: auto;
+}
+
+.action-button.icon-duplicate:hover {
+  background-color: #34c759;
+  border-color: #34c759;
+}
+
+.action-button.icon-duplicate svg {
+  width: 15px;
+  height: auto;
+}
+
+.action-button.icon-delete:hover {
+  background-color: #eb5757;
+  border-color: #eb5757;
+}
+
+.action-button.icon-delete svg {
+  width: 13px;
+  height: auto;
+}

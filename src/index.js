@@ -1,42 +1,55 @@
-import React from "react";
-import ReactDOM from "react-dom/client";
-import ShinyRow from "./ShinyRow";
-import {
-  addElementToCache,
-  getCachedElement,
-  registerFn,
-} from "./plugin-helpers";
-import pluginInfo from "./plugin-manifest.json";
+import { registerFn } from './common/plugin-helpers';
+import pluginInfo from './plugin-manifest.json';
+import { parsePluginSettings } from './kanban-board/helpers';
+import { handlePluginFormConfig } from './field-config/plugin-form';
+import { handleManagePlugin } from './manage';
+import { handleBoardPlugin } from './kanban-board';
 
-const updateApp = (root, data) => {
-  root.render(<ShinyRow data={data} />);
+import cssString from './styles/style.css';
+import i18n from 'i18next';
+
+const loadStyles = () => {
+  if (!document.getElementById(`${pluginInfo.id}-styles`)) {
+    const style = document.createElement('style');
+    style.id = `${pluginInfo.id}-styles`;
+    style.textContent = cssString;
+    document.head.appendChild(style);
+  }
 };
 
-const initApp = (div, data) => {
-  const root = ReactDOM.createRoot(div);
-  updateApp(root, data);
-  return root;
-};
+registerFn(
+  pluginInfo,
+  (handler, client, { getPluginSettings, getLanguage, openModal, toast }) => {
+    loadStyles();
 
-registerFn(pluginInfo, (handler) => {
-  handler.on(
-    "flotiq.grid.cell::render",
-    ({ data, accessor, contentTypeName, contentObject }) => {
-      if (accessor !== "title") return null;
-      const key = `${contentTypeName}-${contentObject.id}-${accessor}`;
-      const cachedApp = getCachedElement(key);
-      if (cachedApp) {
-        updateApp(cachedApp.root, data);
-        return cachedApp.element;
-      }
-
-      const div = document.createElement("div");
-      addElementToCache(div, initApp(div, data), key);
-      return div;
+    const language = getLanguage();
+    if (language !== i18n.language) {
+      i18n.changeLanguage(language);
     }
-  );
-});
 
-const puginPreviewRoot = document.getElementById("plugin-preview-root");
+    handler.on('flotiq.plugins.manage::form-schema', (data) =>
+      handleManagePlugin(data),
+    );
 
-if (puginPreviewRoot) initApp(puginPreviewRoot, "Hello World!");
+    handler.on('flotiq.form.field::config', (data) => {
+      if (
+        data.contentType?.id === pluginInfo.id &&
+        data.contentType?.nonCtdSchema &&
+        data.name
+      ) {
+        return handlePluginFormConfig(data);
+      }
+    });
+
+    handler.on('flotiq.grid::render', (data) => {
+      const pluginSettings = parsePluginSettings(getPluginSettings());
+      return handleBoardPlugin(pluginSettings, data, client, openModal, toast);
+    });
+
+    handler.on('flotiq.language::changed', ({ language }) => {
+      if (language !== i18n.language) {
+        i18n.changeLanguage(language);
+      }
+    });
+  },
+);
