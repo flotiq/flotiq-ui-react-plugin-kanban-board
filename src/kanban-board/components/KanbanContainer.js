@@ -15,14 +15,13 @@ import { extractFieldType, parseOptions } from '../helpers';
 import i18n from '../../i18n';
 
 const getCardValueFromConfig = (
-  key,
+  objectKey,
   contentObject,
   config,
   contentType = {},
 ) => {
-  const objectKey = config[key];
   if (Array.isArray(objectKey)) {
-    return config[key]?.map((additionalFieldKey) => ({
+    return objectKey.map((additionalFieldKey) => ({
       data: getCardValueFromConfig(
         additionalFieldKey,
         contentObject,
@@ -32,6 +31,7 @@ const getCardValueFromConfig = (
       ...extractFieldType(contentType, additionalFieldKey),
     }));
   }
+
   return contentObject[objectKey];
 };
 
@@ -125,12 +125,16 @@ const KanbanContainer = ({
         contentObject: object,
         card: {
           additionalFields: getCardValueFromConfig(
-            'additional_fields',
+            pluginConfig['additional_fields'],
             object,
             pluginConfig,
             contentType,
           ),
-          title: getCardValueFromConfig('title', object, pluginConfig),
+          title: getCardValueFromConfig(
+            pluginConfig['title'],
+            object,
+            pluginConfig,
+          ),
           image: getImageFromCo('image', object, pluginConfig, client),
         },
       };

@@ -184,6 +184,22 @@
   height: 16px;
 }
 
+.kanban-board__card-additional-field-select-radio-renderer-value{
+  background-color: #E4F9B9;
+  border-radius: 6px;
+  padding: 2px 5px;
+}
+
+.kanban-board__card-additional-field-select-radio-renderer{
+  align-items: center;
+}
+
+.mode-dark .kanban-board__card-additional-field-select-radio-renderer-value{
+  background-color: transparent!important;
+  border: 1px solid #8EA1B8!important;
+  color: #8EA1B8!important;
+}
+
 /** loader */
 .kanban-board-ui-plugin__loader-container {
   width: 100%;
