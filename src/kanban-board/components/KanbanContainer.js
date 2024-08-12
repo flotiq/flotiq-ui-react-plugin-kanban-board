@@ -35,6 +35,15 @@ const getCardValueFromConfig = (
   return contentObject[objectKey];
 };
 
+const updateCardStatusInAdditionalFields = (card, selectedField, newStatus) => {
+  card.additionalFields = card.additionalFields?.map((additionalField) => {
+    if (additionalField.key === selectedField) {
+      additionalField.data = newStatus;
+    }
+    return additionalField;
+  });
+};
+
 const getImageFromCo = (configKey, contentObject, config, client) => {
   const objectKey = config[configKey];
   const image = contentObject[objectKey]?.[0];
@@ -210,6 +219,12 @@ const KanbanContainer = ({
           ...activeCard.contentObject,
           [selectedField]: targetColumnId,
         };
+
+        updateCardStatusInAdditionalFields(
+          activeCard.card,
+          selectedField,
+          targetColumnId,
+        );
 
         cardsCopy[targetColumnId] = cards[targetColumnId].filter(
           ({ contentObject }) => contentObject.id !== activeId,
