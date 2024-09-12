@@ -314,11 +314,14 @@ const KanbanContainer = ({
 
       const targetColumnId = active.data.current.sortable?.containerId;
       if (targetColumnId !== selectedCard.contentObject[selectedField]) {
-        try {
-          await client[contentType.name].patch(activeCardId, {
-            [selectedField]: targetColumnId,
-          });
-        } catch (e) {
+        const { status } = await client[contentType.name].patch(activeCardId, {
+          [selectedField]: targetColumnId,
+          dd: 'dd',
+        });
+
+        if (status === 400) {
+          toast.error(i18n.t('StateUpdateError'));
+        } else if (status !== 200) {
           toast.error(i18n.t('FetchError'));
         }
       }

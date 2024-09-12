@@ -27,6 +27,7 @@ i18n.init({
           'Error occurred while connecting to the server, please try again later.',
         NonRequiredFieldsInCTD:
           'Make sure the selected content type contains fields that can be used in the plugin. Allowed types: {{types}}',
+        StateUpdateError: 'Failed to update card status',
       },
     },
     pl: {
@@ -52,6 +53,7 @@ i18n.init({
           'Wystąpił błąd połączenia z serwerem, spróbuj ponownie później.',
         NonRequiredFieldsInCTD:
           'pewnij się, że wybrany typ definicji zawiera pola, które mogą być wykorzystane we wtyczce. Dozwolone typy: {{types}}',
+        StateUpdateError: 'Nie udało się zaktualizować karty',
       },
     },
   },
