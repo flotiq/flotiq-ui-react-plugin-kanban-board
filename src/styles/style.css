@@ -67,6 +67,7 @@
 
 .kanban-board__card-container {
   min-width: 200px;
+  max-width: 300px;
   border: 1px #dae3f2 solid;
   background-color: #ffffff;
   border-radius: 10px;
@@ -87,6 +88,8 @@
   height: 100px;
   max-height: 100px;
   min-height: 100px;
+  min-width: 200px;
+  max-width: 300px;
   border: 1px rosybrown solid;
   background-color: salmon;
   border-radius: 5px;
@@ -147,13 +150,15 @@
   gap: 5px;
 }
 
+.kanban-board__card-additional-field-rich-text-and-text-area-renderer,
 .kanban-board__card-additional-field-checkbox-renderer,
 .kanban-board__card-additional-field-select-radio-renderer,
 .kanban-board__card-additional-field-default-renderer {
-  padding: 0px 10px;
+  padding: 0 10px;
   display: flex;
 }
 
+.kanban-board__card-additional-field-rich-text-and-text-area-title,
 .kanban-board__card-additional-field-checkbox-renderer-title,
 .kanban-board__card-additional-field-select-radio-renderer-title,
 .kanban-board__card-additional-field-default-renderer-title {
@@ -198,6 +203,18 @@
   background-color: #2e3b1d;
   border: 1px solid #e4f9b9;
   color: #e4f9b9;
+}
+
+.kanban-board__card-additional-field-rich-text-and-text-area-value{
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+  line-height: inherit;
+  font-size: 12px;
+
 }
 
 /** loader */

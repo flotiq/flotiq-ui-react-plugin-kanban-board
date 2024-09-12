@@ -1,6 +1,6 @@
 import { useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
-
+import DOMPurify from 'dompurify';
 import { ReactComponent as IconEdit } from '../../images/pen-icon.svg';
 import { ReactComponent as IconDuplicate } from '../../images/duplicate-icon.svg';
 import { ReactComponent as IconDelete } from '../../images/bin-icon.svg';
@@ -45,16 +45,34 @@ const AdditionalDataRenderer = ({ data, dataKey, type }) => {
     </div>
   );
 
+  const richTextAndTextAreaRenderer = (dataKey, data) => {
+    const sanitizedContent = DOMPurify.sanitize(data);
+    return (
+      <div className="kanban-board__card-additional-field-rich-text-and-text-area-renderer">
+        <span className="kanban-board__card-additional-field-rich-text-and-text-area-title">
+          {dataKey}:
+        </span>
+        <span
+          className="kanban-board__card-additional-field-rich-text-and-text-area-value"
+          dangerouslySetInnerHTML={{ __html: sanitizedContent }}
+        ></span>
+      </div>
+    );
+  };
+
   switch (type) {
     case 'checkbox':
       return checkBoxRenderer(dataKey, data);
     case 'select':
     case 'radio':
+    case 'dateTime':
       return selectAndRadioRenderer(dataKey, data);
     case 'text':
     case 'number':
-    case 'date':
       return defaultRenderer(dataKey, data);
+    case 'textarea':
+    case 'richtext':
+      return richTextAndTextAreaRenderer(dataKey, data);
     default:
       return <></>;
   }
@@ -119,16 +137,28 @@ const KanbanCard = ({
       )}
       <h5 className="kanban-board__card-header">{card.title}</h5>
       <div className="kanban-board__card-additional-fields-container">
-        {card.additionalFields?.map((additionalField, index) => {
-          return (
-            <AdditionalDataRenderer
-              key={`${additionalField.key}-${index}`}
-              dataKey={additionalField.key}
-              data={additionalField.data}
-              type={additionalField.type}
-            />
-          );
-        })}
+        {card.additionalFields
+          ?.sort((a, b) => {
+            const priority = ['textarea', 'richtext'];
+
+            const indexA = priority.indexOf(a.type);
+            const indexB = priority.indexOf(b.type);
+
+            if (indexA === -1 && indexB === -1) return 0;
+            if (indexA === -1) return 1;
+            if (indexB === -1) return -1;
+            return indexA - indexB;
+          })
+          ?.map((additionalField, index) => {
+            return (
+              <AdditionalDataRenderer
+                key={`${additionalField.key}-${index}`}
+                dataKey={additionalField.key}
+                data={additionalField.data}
+                type={additionalField.type}
+              />
+            );
+          })}
       </div>
 
       <div className="kanban-board__card-actions">

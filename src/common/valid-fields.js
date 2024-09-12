@@ -10,9 +10,11 @@ export const validCardAdditionalFields = [
   'text',
   'number',
   'select',
-  'date',
+  'dateTime',
   'checkbox',
   'radio',
+  'richtext',
+  'textarea',
 ];
 
 export const getValidFields = (contentTypes) => {
