@@ -1,6 +1,6 @@
 {
-  "id": "flotiq.kanban-view-dev",
-  "name": "Kanban view dev",
+  "id": "flotiq.kanban-view",
+  "name": "Kanban view",
   "description": "This plugin will change Content Objects grid into kanban board for selected Content Definition. ",
   "version": "1.1.2",
   "repository": "https://github.com/flotiq/flotiq-ui-react-plugin-kanban-board",
