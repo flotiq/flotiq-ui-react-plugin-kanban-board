@@ -14,6 +14,7 @@ export const parseOptions = (contentDefinition, selectedField) => {
 
 export const extractFieldType = ({ metaDefinition }, propertyKey) => {
   const fieldType = metaDefinition?.propertiesConfig[propertyKey]?.inputType;
+  const label = metaDefinition?.propertiesConfig[propertyKey]?.label;
   if (!fieldType) return {};
-  return { key: propertyKey, type: fieldType };
+  return { key: propertyKey, type: fieldType, label: label };
 };

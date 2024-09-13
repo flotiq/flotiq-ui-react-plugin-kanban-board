@@ -150,10 +150,11 @@ const KanbanCard = ({
             return indexA - indexB;
           })
           ?.map((additionalField, index) => {
+            console.log(additionalField);
             return (
               <AdditionalDataRenderer
                 key={`${additionalField.key}-${index}`}
-                dataKey={additionalField.key}
+                dataKey={additionalField.label}
                 data={additionalField.data}
                 type={additionalField.type}
               />
