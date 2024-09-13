@@ -150,12 +150,17 @@
   gap: 5px;
 }
 
-.kanban-board__card-additional-field-rich-text-and-text-area-renderer,
 .kanban-board__card-additional-field-checkbox-renderer,
 .kanban-board__card-additional-field-select-radio-renderer,
 .kanban-board__card-additional-field-default-renderer {
   padding: 0 10px;
   display: flex;
+}
+
+.kanban-board__card-additional-field-rich-text-and-text-area-renderer{
+  padding: 0 10px;
+  display: flex;
+  flex-direction: column;
 }
 
 .kanban-board__card-additional-field-rich-text-and-text-area-title,
@@ -210,8 +215,8 @@
   -webkit-box-orient: vertical;
   overflow: hidden;
   text-overflow: ellipsis;
-  -webkit-line-clamp: 2;
-  line-clamp: 2;
+  -webkit-line-clamp: 4;
+  line-clamp: 4;
   line-height: inherit;
   font-size: 12px;
 

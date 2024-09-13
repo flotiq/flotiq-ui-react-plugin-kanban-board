@@ -153,7 +153,7 @@ const KanbanCard = ({
             return (
               <AdditionalDataRenderer
                 key={`${additionalField.key}-${index}`}
-                dataKey={additionalField.key}
+                dataKey={additionalField.label}
                 data={additionalField.data}
                 type={additionalField.type}
               />
