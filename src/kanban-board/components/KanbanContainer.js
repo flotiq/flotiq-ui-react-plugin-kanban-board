@@ -316,7 +316,6 @@ const KanbanContainer = ({
       if (targetColumnId !== selectedCard.contentObject[selectedField]) {
         const { status } = await client[contentType.name].patch(activeCardId, {
           [selectedField]: targetColumnId,
-          dd: 'dd',
         });
 
         if (status === 400) {
