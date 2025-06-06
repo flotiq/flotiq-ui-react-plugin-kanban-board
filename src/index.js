@@ -49,7 +49,7 @@ registerFn(
     });
 
     handler.on('flotiq.form.field.listeners::add', (data) =>
-      handleFormFieldListenrsAdd(data, getPluginSettings),
+      handleFormFieldListenrsAdd(data),
     );
 
     handler.on('flotiq.language::changed', ({ language }) => {
