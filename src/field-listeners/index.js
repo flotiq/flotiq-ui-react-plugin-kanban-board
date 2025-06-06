@@ -1,7 +1,7 @@
 import pluginInfo from '../plugin-manifest.json';
 
-export const handleFormFieldListenrsAdd = ({ contentType, formik, name }) => {
-  if (contentType?.id === pluginInfo.id && contentType?.nonCtdSchema) {
+export const handleFormFieldListenersAdd = ({ contentType, formik, name }) => {
+  if (name && contentType?.id === pluginInfo.id && contentType?.nonCtdSchema) {
     const { index, type } =
       name.match(/kanbanBoard\[(?<index>\d+)\].(?<type>\w+)/)?.groups || {};
 
