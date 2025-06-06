@@ -32,24 +32,7 @@ export const handlePluginFormConfig = ({ name, config, formik }) => {
     cardAdditionalFields,
   } = getCachedElement(validFieldsCacheKey);
 
-  const keysToClearOnCtdChange = [
-    'source',
-    'title',
-    'image',
-    'additional_fields',
-  ];
-
   switch (type) {
-    case 'content_type':
-      config.onChange = (_, value) => {
-        if (value == null) formik.setFieldValue(name, '');
-        else formik.setFieldValue(name, value);
-
-        keysToClearOnCtdChange.forEach((key) => {
-          formik.setFieldValue(`kanbanBoard[${index}].${key}`, '');
-        });
-      };
-      break;
     case 'source':
       insertSelectOptions(
         config,
