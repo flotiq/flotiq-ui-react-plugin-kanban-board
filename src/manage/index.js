@@ -28,7 +28,7 @@ export const handleManagePlugin = ({ contentTypes, modalInstance }) => {
 
     formSchema = {
       options: {
-        disbaledBuildInValidation: true,
+        disabledBuildInValidation: true,
         onValidate: getValidator(
           sourceFieldsKeys,
           cardTitleFieldsKeys,
