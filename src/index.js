@@ -4,6 +4,7 @@ import { parsePluginSettings } from './kanban-board/helpers';
 import { handlePluginFormConfig } from './field-config/plugin-form';
 import { handleManagePlugin } from './manage';
 import { handleBoardPlugin } from './kanban-board';
+import { handleFormFieldListenersAdd } from './field-listeners';
 import i18n from 'i18next';
 
 /* eslint import/no-webpack-loader-syntax: off */
@@ -46,6 +47,10 @@ registerFn(
       const pluginSettings = parsePluginSettings(getPluginSettings());
       return handleBoardPlugin(pluginSettings, data, client, openModal, toast);
     });
+
+    handler.on('flotiq.form.field.listeners::add', (data) =>
+      handleFormFieldListenersAdd(data),
+    );
 
     handler.on('flotiq.language::changed', ({ language }) => {
       if (language !== i18n.language) {
