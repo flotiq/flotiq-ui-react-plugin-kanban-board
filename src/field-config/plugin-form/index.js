@@ -19,12 +19,15 @@ const insertSelectOptions = (config, options = [], emptyOptionMessage) => {
   config.options = options;
 };
 
-export const handlePluginFormConfig = ({ name, config, formik }) => {
+export const handlePluginFormConfig = ({ name, config, form }) => {
   const { index, type } =
     name.match(/kanbanBoard\[(?<index>\d+)\].(?<type>\w+)/)?.groups || {};
 
   if (index == null || !type) return;
-  const ctd = formik.values.kanbanBoard[index].content_type;
+  const ctd = form.getValue(`kanbanBoard[${index}].content_type`);
+
+  console.log(ctd);
+
   const {
     sourceFields,
     cardTitleFields,

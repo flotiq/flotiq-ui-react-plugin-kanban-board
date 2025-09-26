@@ -1,6 +1,6 @@
 import pluginInfo from '../plugin-manifest.json';
 
-export const handleFormFieldListenersAdd = ({ contentType, formik, name }) => {
+export const handleFormFieldListenersAdd = ({ contentType, form, name }) => {
   if (name && contentType?.id === pluginInfo.id && contentType?.nonCtdSchema) {
     const { index, type } =
       name.match(/kanbanBoard\[(?<index>\d+)\].(?<type>\w+)/)?.groups || {};
@@ -11,7 +11,7 @@ export const handleFormFieldListenersAdd = ({ contentType, formik, name }) => {
       return {
         onChange: () => {
           ['source', 'title', 'image', 'additional_fields'].forEach((key) => {
-            formik.setFieldValue(`kanbanBoard[${index}].${key}`, '');
+            form.setFieldValue(`kanbanBoard[${index}].${key}`, '');
           });
         },
       };

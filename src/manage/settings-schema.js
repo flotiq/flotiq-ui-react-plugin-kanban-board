@@ -124,12 +124,6 @@ export const getSchema = (contentTypes) => ({
   },
 });
 
-const addToErrors = (errors, index, field, error) => {
-  if (!errors.kanbanBoard) errors.kanbanBoard = [];
-  if (!errors.kanbanBoard[index]) errors.kanbanBoard[index] = {};
-  errors.kanbanBoard[index][field] = error;
-};
-
 export const getValidator = (
   sourceFieldKeys,
   cardTitleFieldsKeys,
@@ -145,7 +139,8 @@ export const getValidator = (
 
       requiredFields.forEach((requiredField) => {
         if (!settings[requiredField]) {
-          addToErrors(errors, index, requiredField, i18n.t('FieldRequired'));
+          errors[`kanbanBoard[${index}].${requiredField}`] =
+            i18n.t('FieldRequired');
         }
       });
 
@@ -168,13 +163,13 @@ export const getValidator = (
             value?.length > 0 &&
             !value.every((element) => validFieldsKeys.includes(element || []))
           ) {
-            addToErrors(errors, index, key, i18n.t('WrongFieldType'));
+            errors[`kanbanBoard[${index}].${key}`] = i18n.t('WrongFieldType');
           }
           return;
         }
 
         if (value && !(validFieldsKeys || []).includes(value)) {
-          addToErrors(errors, index, key, i18n.t('WrongFieldType'));
+          errors[`kanbanBoard[${index}].${key}`] = i18n.t('WrongFieldType');
         }
       });
     });
