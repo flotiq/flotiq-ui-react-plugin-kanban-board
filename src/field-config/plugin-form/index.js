@@ -26,8 +26,6 @@ export const handlePluginFormConfig = ({ name, config, form }) => {
   if (index == null || !type) return;
   const ctd = form.getValue(`kanbanBoard[${index}].content_type`);
 
-  console.log(ctd);
-
   const {
     sourceFields,
     cardTitleFields,
